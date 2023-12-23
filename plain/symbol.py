@@ -23,4 +23,4 @@ class Symbol(Layout):
         self.image = self.image.resize((int(width), int(height)))
         self.width = width
         self.height = height
-        self.image.save(os.path.join('debug','symbol.png'))
+        #self.image.save(os.path.join('debug','symbol.png'))

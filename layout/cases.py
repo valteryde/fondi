@@ -68,7 +68,7 @@ class Cases(Layout):
 
         self.setCenterLine(-self.height/2 + self.fontSize/4) # HVORFOR 4????
 
-        self.image.save('debug/cases.png')
+        #self.image.save('debug/cases.png')
 
 
 MACROS["\\cases"] = Cases

@@ -47,7 +47,7 @@ class FracLayout(Layout):
         imd.line((0, self.height+y, self.width, self.height+y), self.color, width=linewidth)
 
         self.image = replaceColorRandom(self.image)
-        self.image.save('debug/test-frac.png')
+        #self.image.save('debug/test-frac.png')
 
 
     def __repr__(self):

@@ -223,7 +223,7 @@ def rearrangeBidirection(tokens):
     return newtokens
 
 
-def parse(expr):
+def parse_(expr):
     print('---------S---------')
     expr = translate(expr)
     print(expr)
@@ -244,7 +244,7 @@ def parse(expr):
     return tokens
 
 
-def parse_(expr):
+def parse(expr):
     expr = translate(expr)
     tokens = tokenize(expr)
     tokens = combine(tokens)

@@ -32,7 +32,7 @@ class SuperLayout(Layout):
         self.base.paste(self.image, self.offset)
         self.upper.paste(self.image, self.offset)
 
-        self.image.save('debug/test-super.png')
+        #self.image.save('debug/test-super.png')
 
 
     def __repr__(self):
@@ -64,7 +64,7 @@ class SubLayout(Layout):
         self.base.paste(self.image, self.offset)
         self.lower.paste(self.image, self.offset)
 
-        self.image.save('debug/test-super.png')
+        #self.image.save('debug/test-super.png')
 
         self.setCenterLine(self.lower.getBottom() - self.base.getBottom())
 
@@ -107,7 +107,7 @@ class SubSuperLayout(Layout):
 
         self.setCenterLine(self.lower.getBottom() - self.base.getBottom())
 
-        self.image.save('debug/test-super.png')
+        #self.image.save('debug/test-super.png')
         
 
     def __repr__(self):

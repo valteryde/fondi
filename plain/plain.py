@@ -19,7 +19,7 @@ def isNum(x:str) -> bool:
 # ------------------------------------------------------------------------------
 class PlainText(Layout):
     
-    def __init__(self, text, fontSize, color, center=False):
+    def __init__(self, text, fontSize, color, center=False, italic=True):
         super().__init__()
 
         lowerOffset = 0
@@ -32,7 +32,7 @@ class PlainText(Layout):
         self.image = Image.new("RGBA", winSize, color=(0,0,0,0))
         draw = ImageDraw.Draw(self.image)
         
-        if isNum(text) or text in REGULAR:
+        if isNum(text) or text in REGULAR or (not italic):
             font = ImageFont.truetype(os.path.join(BASEPATH, "fonts" ,"NewCM10-Regular.otf"), fontSize)
         else:
             font = ImageFont.truetype(os.path.join(BASEPATH, "fonts" ,"NewCM08-Italic.otf"), fontSize)

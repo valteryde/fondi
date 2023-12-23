@@ -35,7 +35,7 @@ class MathText(Layout):
         self.__parse__(text)
         self.__draw__()
 
-        print('Tid ({}):'.format(text),round((time.time() - startTime)*1000, 2),'ms')
+        #print('Tid ({}):'.format(text),round((time.time() - startTime)*1000, 2),'ms')
 
     
     def __parse__(self, text):
@@ -87,4 +87,4 @@ class MathText(Layout):
 
         # self.image = self.image.crop(self.image.getbbox())
         self.image = replaceColorRandom(self.image)
-        self.image.save('debug/test-{}.png'.format(self.text))
+        #self.image.save('debug/test-{}.png'.format(self.text))

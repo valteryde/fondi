@@ -51,7 +51,6 @@ class Layout:
         self.y = y
 
     def setCenterLine(self, dy):
-        print('->',self)
         self.hasCenterLine = True
         self.centerline = dy
 
