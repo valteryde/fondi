@@ -1,7 +1,6 @@
 
 from PIL import Image
 from ..layout import Layout
-from .helper import BASEPATH
 import os
 
 class Image(Layout):

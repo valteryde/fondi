@@ -1,7 +1,7 @@
 
 from .layout import *
 from ..mathtext import MathText
-from ..plain.helper import replaceColorRandom, BASEPATH
+from ..plain.helper import replaceColorRandom
 from ..plain import Symbol, PlainText
 from .helper import boundingBox
 from PIL import Image, ImageDraw

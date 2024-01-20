@@ -3,7 +3,7 @@ from PIL import ImageDraw, Image, ImageFont
 from ..layout import Layout
 from .helper import replaceColorRandom
 import os
-from .helper import BASEPATH
+from ..fileloader import loadFile
 
 REGULAR = set(['+', '-', '>', '<', '=', '·'])
 
@@ -33,16 +33,16 @@ class PlainText(Layout):
         draw = ImageDraw.Draw(self.image)
         
         if isNum(text) or text in REGULAR or (not italic):
-            font = ImageFont.truetype(os.path.join(BASEPATH, "fonts" ,"NewCM10-Regular.otf"), fontSize)
+            font = ImageFont.truetype(loadFile("NewCM10-Regular.otf"), fontSize)
         else:
-            font = ImageFont.truetype(os.path.join(BASEPATH, "fonts" ,"NewCM08-Italic.otf"), fontSize)
+            font = ImageFont.truetype(loadFile("NewCM10-Italic.otf"), fontSize)
         
         draw.text((winSize[0]//2, winSize[1]//2), text, self.color, font=font, anchor="ms")
         
         bbox = self.image.getbbox()
         lowerOffset = bbox[3] - winSize[1]//2
         
-        self.image.save('debug/no-crop-{}.png'.format(text))
+        #self.image.save('debug/no-crop-{}.png'.format(text))
         self.image = self.image.crop(bbox)
         
         self.width = self.image.width
@@ -51,7 +51,7 @@ class PlainText(Layout):
         self.setCenterLine(-lowerOffset)
 
         self.image = replaceColorRandom(self.image)
-        self.image.save('debug/test-plain-{}.png'.format(str(self.text)))
+        #self.image.save('debug/test-plain-{}.png'.format(str(self.text)))
 
 
     def __repr__(self):

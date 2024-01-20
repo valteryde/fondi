@@ -1,10 +1,7 @@
 
 from random import randint
 import numpy as np
-import importlib.resources
-BASEPATH = ''
-with importlib.resources.path("fondi.resources", "") as template_file:
-    BASEPATH = template_file
+
 
 def randomColor():
     return (randint(0,255), randint(0,255), randint(0,255), 255)

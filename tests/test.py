@@ -1,16 +1,15 @@
 
-import unittest
-import os
-import fondi
+import sys
+sys.path.append('../src')
 
-BASEFOLDER = 'tests'
+import unittest
+import fondi
 
 class TestMethods(unittest.TestCase):
 
-    def __createMathText__(self, mathtext, filename, fontsize=50, color=(255,0,0,255)):
-        fpath = os.path.join(BASEFOLDER,filename)
+    def __createMathText__(self, mathtext, filename, fontsize=50, color=(255,255,255,255)):
         txt = fondi.MathText(mathtext, fontsize, color)
-        txt.image.save(fpath)
+        txt.image.save(filename)
 
     def testPolynomen(self):
         self.__createMathText__('2*x_{5}^{2}+7^{2}_{1}', 'polynomen.png')
@@ -32,9 +31,9 @@ class TestMethods(unittest.TestCase):
     
     def testrsquared(self):
         self.__createMathText__('R^2=0,9281', 'rsquared.png')
-        
 
+    def testrsquared(self):
+        self.__createMathText__('R^2=0,9281', 'rsquared.png')
 
 if __name__ == '__main__':
-    if not os.path.exists(BASEFOLDER): os.mkdir(BASEFOLDER)
     unittest.main()

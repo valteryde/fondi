@@ -1,9 +1,10 @@
 
 from PIL import ImageDraw, Image, ImageFont
 from ..layout import Layout
-from .helper import replaceColorRandom, BASEPATH
+from .helper import replaceColorRandom
 import os
 import numpy as np
+from ..fileloader import loadFile
 
 class Symbol(Layout):
 
@@ -11,8 +12,7 @@ class Symbol(Layout):
         super().__init__()
 
         self.fname = fname
-        self.path = os.path.join(BASEPATH, fname)
-        self.image = Image.open(self.path)
+        self.image = Image.open(loadFile(fname))
 
         self.color = color
         data = np.array(self.image)
