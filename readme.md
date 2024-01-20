@@ -22,3 +22,4 @@ A simple mathematical LaTeX render for python
 - [ ] Sum
 - [ ] Integrals
 - [ ] Prettier rendering
+- [ ] Better alignment
