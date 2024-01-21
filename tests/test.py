@@ -34,6 +34,9 @@ class TestMethods(unittest.TestCase):
 
     def testrsquared(self):
         self.__createMathText__('R^2=0,9281', 'rsquared.png')
+    
+    def testSquareRoot(self):
+        self.__createMathText__('\\sqrt{10^{2}}=10', 'sqrt.png')
 
 if __name__ == '__main__':
     unittest.main()
