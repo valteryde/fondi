@@ -7,3 +7,4 @@ from .layout.supersub import SubLayout, SuperLayout, SuperSubLayout, SubSuperLay
 from .layout.symbols import *
 from .layout.cases import Cases
 from .layout.text import StandardText
+from .layout.sqrt import SqrtLayout

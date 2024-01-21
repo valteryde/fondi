@@ -23,6 +23,7 @@ TOKENS = {
     "\\squarepara": COMMAND,
     "\\cases": COMMAND,
     "\\text": COMMAND,
+    "\\sqrt": COMMAND,
     "^_": BIDIRECTIONALCMD,
     "_^": BIDIRECTIONALCMD,
     "^": BIDIRECTIONALCMD,
