@@ -2,9 +2,9 @@
 
 A simple mathematical LaTeX render for python
 
-![Nested layouts](tests/cases.png)
+![Nested layouts](tests/images/cases.png)
 
-![Super- and subscript](tests/supersub.png)
+![Super- and subscript](tests/images/supersub.png)
 
 ## Features
 
