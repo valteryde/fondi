@@ -12,31 +12,40 @@ class TestMethods(unittest.TestCase):
         txt.image.save(filename)
 
     def testPolynomen(self):
-        self.__createMathText__('2*x_{5}^{2}+7^{2}_{1}', 'polynomen.png')
+        self.__createMathText__('2*x_{5}^{2}+7^{2}_{1}', 'images/polynomen.png')
 
     def testCases(self):
-        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{else}', 'cases.png')
+        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{else}', 'images/cases.png')
     
     def testNestedFraction(self):
-        self.__createMathText__('10+\\frac{\\frac{1}{2}}{x}', 'nested_fraction.png')
+        self.__createMathText__('10+\\frac{\\frac{1}{2}}{x}', 'images/nested_fraction.png')
 
     def testBigFont(self):
-        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{else}', 'bigfont.png', 200)
+        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{else}', 'images/bigfont.png', 200)
     
     def testSmallFont(self):
-        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{else}', 'smallfont.png', 16)
+        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{else}', 'images/smallfont.png', 16)
 
     def testSuperSuber(self):
-        self.__createMathText__('0,4x^{3}+2*x^{2}+5*x+c_{0}+5^{2}_{x}', 'supersub.png')
+        self.__createMathText__('0,4x^{3}+2*x^{2}+5*x+c_{0}+5^{2}_{x}', 'images/supersub.png')
     
     def testrsquared(self):
-        self.__createMathText__('R^2=0,9281', 'rsquared.png')
+        self.__createMathText__('R^2=0,9281', 'images/rsquared.png')
 
     def testrsquared(self):
-        self.__createMathText__('R^2=0,9281', 'rsquared.png')
+        self.__createMathText__('R^2=0,9281', 'images/rsquared.png')
     
     def testSquareRoot(self):
-        self.__createMathText__('\\sqrt{10^{2}}=10', 'sqrt.png')
+        self.__createMathText__('\\sqrt{10^{2}}=10', 'images/sqrt.png')
+    
+    def testSpaces(self):
+        self.__createMathText__('100\\quad000', 'images/10000a.png')
+        self.__createMathText__('100\\,000', 'images/10000b.png')
+        self.__createMathText__('100\\:000', 'images/10000c.png')
+        self.__createMathText__('100\\;000', 'images/10000d.png')
+        self.__createMathText__('100\\smallSpace000', 'images/10000e.png')
+        self.__createMathText__('100\\qquad000', 'images/10000f.png')
 
 if __name__ == '__main__':
-    unittest.main()
+    #unittest.main()
+    TestMethods().testSpaces()
