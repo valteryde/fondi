@@ -47,5 +47,5 @@ class TestMethods(unittest.TestCase):
         self.__createMathText__('100\\qquad000', 'images/10000f.png')
 
 if __name__ == '__main__':
-    #unittest.main()
-    TestMethods().testSpaces()
+    unittest.main()
+    # TestMethods().testSpaces()

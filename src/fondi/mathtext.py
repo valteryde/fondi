@@ -41,8 +41,8 @@ class MathText(Layout):
     def __parse__(self, text):
         
 
-        #     0,4x^{3}+2*x^{2}+5*x+c_{0}
-        #     #super{0,4x}{3}#super{+2x}{2}#sub{+5*x+c_}{0}
+        # 0,4x^{3}+2*x^{2}+5*x+c_{0}
+        # #super{0,4x}{3}#super{+2x}{2}#sub{+5*x+c_}{0}
         # just in time compiler?
 
         text = text.replace('*', '·')
@@ -50,6 +50,7 @@ class MathText(Layout):
 
         self.line = []
         for clss, tok in tokens:
+            if tok == " ": continue
 
             if clss == PLAINTEXT: # it is not an argument
                 self.line.append(PlainText(tok.replace('{','').replace('}', ''), self.fontSize, self.color))

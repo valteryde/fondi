@@ -39,6 +39,7 @@ class PlainText(Layout):
         
         draw.text((winSize[0]//2, winSize[1]//2), text, self.color, font=font, anchor="ms")
         
+        #self.image.save('debug/plain-{}.png'.format(text))
         bbox = self.image.getbbox()
         lowerOffset = bbox[3] - winSize[1]//2
         
