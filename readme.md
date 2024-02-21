@@ -16,6 +16,7 @@ A simple mathematical LaTeX render for python
 * Fractions
 * Cases
 * Some greek symbols
+* Square root
 
 ## To do list
 
