@@ -1,1 +1,2 @@
-graft src
+include src/fondi/resources
+include src/fondi/resources/*
