@@ -19,6 +19,8 @@ TOKENS = {
     "\\frac": (COMMAND, 2),
     "\\super": (COMMAND, 2),
     "\\sub": (COMMAND, 2),
+    "\\supersub": (COMMAND, 3),
+    "\\subsuper": (COMMAND, 3),
     "\\para": (COMMAND, 1),
     "\\squarepara": (COMMAND, 1),
     "\\cases": (COMMAND, 2),

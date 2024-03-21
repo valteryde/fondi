@@ -290,15 +290,20 @@ def combineCharsToWords(tokens):
     if len(tokens) == 0: return tokens
 
     newtokens = [tokens[0]]
-    
+    aloneList = [" ", ","]
+
     for tp, tok in tokens[1:]:
 
-        if tp != PLAINTEXT or newtokens[-1][0] != PLAINTEXT or tok in [" ", ',']:
+        if tp != PLAINTEXT or newtokens[-1][0] != PLAINTEXT or tok in aloneList:
+            newtokens.append((tp, tok))
+            continue
+        
+        if newtokens[-1][1] in aloneList:
             newtokens.append((tp, tok))
             continue
         
         newtokens[-1] = (PLAINTEXT, newtokens[-1][1] + tok)
-        
+
     return newtokens
 
 
