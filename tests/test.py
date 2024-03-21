@@ -38,6 +38,9 @@ class TestMethods(unittest.TestCase):
     def testSquareRoot(self):
         self.__createMathText__('\\sqrt{10^{2}}=10', 'images/sqrt.png')
     
+    def testSquareRoot(self):
+        self.__createMathText__('\\text{sin}(\\frac{x^2 + (10+2)_{hej}}{\\frac{2}{x}_{i,j}})', 'images/para.png')
+
     def testSpaces(self):
         self.__createMathText__('100\\quad000', 'images/10000a.png')
         self.__createMathText__('100\\,000', 'images/10000b.png')
