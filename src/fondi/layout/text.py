@@ -11,7 +11,9 @@ class StandardText(PlainText):
     def __init__(self, parent, text):
         super().__init__(text, parent.fontSize, parent.color, False, italic=False)
 
+
 MACROS["\\text"] = StandardText
+
 
 #     "\\frac": FracLayout,
 #     "\\super": SuperLayout,

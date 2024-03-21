@@ -16,29 +16,29 @@ TOKENSCOLOR = {
 }
 
 TOKENS = {
-    "\\frac": COMMAND,
-    "\\super": COMMAND,
-    "\\sub": COMMAND,
-    "\\para": COMMAND,
-    "\\squarepara": COMMAND,
-    "\\cases": COMMAND,
-    "\\text": COMMAND,
-    "\\sqrt": COMMAND,
-    "\\quad": COMMAND,
-    "\\,": COMMAND,
-    "\\:": COMMAND,
-    "\\;": COMMAND,
-    "\\!": COMMAND,
-    "\\smallSpace": COMMAND,
-    "\\qquad": COMMAND,
+    "\\frac": (COMMAND, 2),
+    "\\super": (COMMAND, 2),
+    "\\sub": (COMMAND, 2),
+    "\\para": (COMMAND, 1),
+    "\\squarepara": (COMMAND, 1),
+    "\\cases": (COMMAND, 2),
+    "\\text": (COMMAND, 1),
+    "\\sqrt": (COMMAND, 1),
+    "\\quad": (COMMAND, 0),
+    "\\,": (COMMAND, 0),
+    "\\:": (COMMAND, 0),
+    "\\;": (COMMAND, 0),
+    "\\!": (COMMAND, 0),
+    "\\smallSpace": (COMMAND, 0),
+    "\\qquad": (COMMAND, 0),
     "^_": BIDIRECTIONALCMD,
     "_^": BIDIRECTIONALCMD,
     "^": BIDIRECTIONALCMD,
     "_": BIDIRECTIONALCMD,
-    # "+": OPERATION,
-    # "-": OPERATION,
-    # "*": OPERATION,
-    # "·": OPERATION,
+    "+": OPERATION,
+    "-": OPERATION,
+    "*": OPERATION,
+    "·": OPERATION,
     "=": OPERATION,
     ">": OPERATION,
     "<": OPERATION,
@@ -56,30 +56,38 @@ DOUBLECOMMANDS = {
     ('_', '^'): "_^"
 }
 
-PARENTHESIS = {
+PARENTHESIS = [
     ("(",')', '\\para'),
     ('[', ']', '\\squarepara'),
-}
+]
 
 ### MORE TOKENS
-TOKENS["\\alpha"] = COMMAND
-TOKENS["\\beta"] = COMMAND
-TOKENS["\\gamma"] = COMMAND
-TOKENS["\\Gamma"] = COMMAND
-TOKENS["\\delta"] = COMMAND
-TOKENS["\\Delta"] = COMMAND
-TOKENS["\\eta"] = COMMAND
-TOKENS["\\epsilon"] = COMMAND
-TOKENS["\\theta"] = COMMAND
-TOKENS["\\kappa"] = COMMAND
-TOKENS["\\kappa"] = COMMAND
-TOKENS["\\lambda"] = COMMAND
-TOKENS["\\tau"] = COMMAND
-TOKENS["\\sigma"] = COMMAND
-TOKENS["\\Sigma"] = COMMAND
-TOKENS["\\phi"] = COMMAND
-TOKENS["\\chi"] = COMMAND
-TOKENS["\\psi"] = COMMAND
-TOKENS["\\omega"] = COMMAND
-TOKENS["\\Omega"] = COMMAND
-TOKENS["\\pi"] = COMMAND
+TOKENS["\\alpha"] = (COMMAND, 0)
+TOKENS["\\beta"] = (COMMAND, 0)
+TOKENS["\\gamma"] = (COMMAND, 0)
+TOKENS["\\Gamma"] = (COMMAND, 0)
+TOKENS["\\delta"] = (COMMAND, 0)
+TOKENS["\\Delta"] = (COMMAND, 0)
+TOKENS["\\eta"] = (COMMAND, 0)
+TOKENS["\\epsilon"] = (COMMAND, 0)
+TOKENS["\\theta"] = (COMMAND, 0)
+TOKENS["\\kappa"] = (COMMAND, 0)
+TOKENS["\\kappa"] = (COMMAND, 0)
+TOKENS["\\lambda"] = (COMMAND, 0)
+TOKENS["\\tau"] = (COMMAND, 0)
+TOKENS["\\sigma"] = (COMMAND, 0)
+TOKENS["\\Sigma"] = (COMMAND, 0)
+TOKENS["\\phi"] = (COMMAND, 0)
+TOKENS["\\chi"] = (COMMAND, 0)
+TOKENS["\\psi"] = (COMMAND, 0)
+TOKENS["\\omega"] = (COMMAND, 0)
+TOKENS["\\Omega"] = (COMMAND, 0)
+TOKENS["\\pi"] = (COMMAND, 0)
+
+### ESCAPE TOKENS
+TOKENS["\\{"] = (COMMAND, 0)
+TOKENS["\\}"] = (COMMAND, 0)
+TOKENS["\\("] = (COMMAND, 0)
+TOKENS["\\)"] = (COMMAND, 0)
+TOKENS["\\["] = (COMMAND, 0)
+TOKENS["\\]"] = (COMMAND, 0)

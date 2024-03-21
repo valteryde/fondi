@@ -116,3 +116,36 @@ MACROS["\\psi"] = Psi
 MACROS["\\omega"] = Omega
 MACROS["\\Omega"] = UOmega
 MACROS["\\pi"] = Pi
+
+### ESCAPES
+class StartCurlyBracket(PlainText):
+    def __init__(self, parent):
+        super().__init__('{', parent.fontSize, parent.color)
+
+class EndCurlyBracket(PlainText):
+    def __init__(self, parent):
+        super().__init__('}', parent.fontSize, parent.color)
+
+class StartSquareBracket(PlainText):
+    def __init__(self, parent):
+        super().__init__('[', parent.fontSize, parent.color)
+
+class EndSquareBracket(PlainText):
+    def __init__(self, parent):
+        super().__init__(']', parent.fontSize, parent.color)
+
+class StartBracket(PlainText):
+    def __init__(self, parent):
+        super().__init__('(', parent.fontSize, parent.color)
+
+class EndBracket(PlainText):
+    def __init__(self, parent):
+        super().__init__(')', parent.fontSize, parent.color)
+
+
+MACROS["\\{"] = StartCurlyBracket
+MACROS["\\}"] = EndCurlyBracket
+MACROS["\\("] = StartBracket
+MACROS["\\)"] = EndBracket
+MACROS["\\["] = StartSquareBracket
+MACROS["\\]"] = EndSquareBracket

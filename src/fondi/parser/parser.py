@@ -2,6 +2,22 @@
 from .tokens import *
 from .helper import cprint
 
+
+def dump(tokens):
+    
+    s = ''
+    for tp, token in tokens:
+
+        if tp in [PLAINTEXT, OPERATION, COMMAND]:
+            s += token
+
+        if tp == FULLCOMMAND:
+            s += token["name"] + '{' + '}{'.join(token["args"]) + '}'
+
+    return s
+
+
+
 def getClosingChar(txt, close='}', open_='{'):
     """
     find en lukket parantes
@@ -14,20 +30,60 @@ def getClosingChar(txt, close='}', open_='{'):
     depth = 0
     for i, c in enumerate(txt):
 
-        depth += c == open_
-        depth -= c == close
+        depth += c == open_ and txt[i-1] != "\\"
+        depth -= c == close and txt[i-1] != "\\"
 
         if depth == 0:
             return i
 
 
-def translate(expr):
+PARAOPEN = [i[0] for i in PARENTHESIS]
+PARACLOSE = [i[1] for i in PARENTHESIS]
+
+def translate(tokens):
     
-    for o, c, macro in PARENTHESIS:
-        expr = expr.replace(o, macro+'{')
-        expr = expr.replace(c, '}')
-    
-    return expr
+    # parenterser
+    # only 0 depth
+    newTokens = []
+    tempTokens = []
+
+    isOpen = False
+    isOpenCloser = ''
+    depth = 0
+    for tp, token in tokens:
+        
+        if token in PARAOPEN:
+
+            depth += 1
+
+            if depth > 1 or isOpen:
+                tempTokens.append((tp, token))
+                continue
+
+            isOpen = True
+            isOpenCloser = PARACLOSE[PARAOPEN.index(token)]
+            tempTokens = []
+        
+        elif token in PARACLOSE:
+            depth -= 1
+
+            if depth > 0 or not isOpen or isOpenCloser != token:
+                tempTokens.append((tp, token))
+                continue
+
+            newTokens.append((
+                FULLCOMMAND, 
+                {"name": PARENTHESIS[PARACLOSE.index(token)][2], "args":[dump(tempTokens)]
+            }))
+            isOpen = False
+
+        elif isOpen:
+            tempTokens.append((tp, token))
+
+        else:
+            newTokens.append((tp, token))
+
+    return newTokens
 
 
 def tokenize(raw):
@@ -52,7 +108,8 @@ def tokenize(raw):
         if i+1 > len(raw): break
         c = raw[i]
 
-        if c == '{':
+        if c == '{' and raw[i-1] != '\\':
+
             close = getClosingChar(raw[i:])
             tokens.append((ARGUMENT,raw[i+1:close+i]))
             offset += close
@@ -109,7 +166,6 @@ def combine(tokens):
     """
     combine command with arguments
     """
-
     newtokens = []
     offset = 0
     for i in range(len(tokens)):
@@ -119,19 +175,26 @@ def combine(tokens):
 
         clss, tok = tokens[i]
 
-        if clss == COMMAND:
+        if type(clss) is tuple and clss[0] == COMMAND:
             args = []
 
             # get all leading args
-            for subclss, subtok in tokens[i+1:]:
+            newoffset = -1
+            for i, (subclss, subtok) in enumerate(tokens[i+1:]):
+
+                if i >= clss[1]:
+                    newoffset = i
+                    break
 
                 if subclss == ARGUMENT:
                     args.append(subtok)
                 else:
                     break
 
+            if newoffset == -1: newoffset = len(args)
+
             newtokens.append((FULLCOMMAND, {"name": tok, "args": args}))
-            offset += len(args)
+            offset += newoffset
             continue
 
         newtokens.append((clss,tok))
@@ -212,7 +275,7 @@ def rearrangeBidirection(tokens):
         if tok[0] == BIDIRECTIONALCMD:
             newtokens.pop(-1)
 
-            newtokens.append((COMMAND,SHORTCUTTOKENS[tok[1]]))
+            newtokens.append((TOKENS[SHORTCUTTOKENS[tok[1]]], SHORTCUTTOKENS[tok[1]]))
             newtokens.append(forceArgumentToStr(tokens[i-1]))
             newtokens.append(forceArgumentToStr(tokens[i+1]))
             offset += 1
@@ -220,6 +283,22 @@ def rearrangeBidirection(tokens):
         
         newtokens.append(tok)
 
+    return newtokens
+
+
+def combineCharsToWords(tokens):
+    if len(tokens) == 0: return tokens
+
+    newtokens = [tokens[0]]
+    
+    for tp, tok in tokens[1:]:
+
+        if tp != PLAINTEXT or newtokens[-1][0] != PLAINTEXT or tok in [" ", ',']:
+            newtokens.append((tp, tok))
+            continue
+        
+        newtokens[-1] = (PLAINTEXT, newtokens[-1][1] + tok)
+        
     return newtokens
 
 
@@ -245,10 +324,12 @@ def parse_(expr):
 
 
 def parse(expr):
-    expr = translate(expr)
     tokens = tokenize(expr)
     tokens = combine(tokens)
+    tokens = translate(tokens)
     tokens = catchDoubleBiCommands(tokens)
     tokens = rearrangeBidirection(tokens)
     tokens = combine(tokens)
+    tokens = combineCharsToWords(tokens)
+
     return tokens

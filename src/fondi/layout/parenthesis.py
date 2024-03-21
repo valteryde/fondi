@@ -26,9 +26,10 @@ class ParenthesisLayout(Layout):
         self.color = parent.color
 
         self.inner = MathText(inner, self.fontSize, self.color)
-        self.inner.setCenter(0,0)
+        self.inner.setCenter(0,0) 
         
-        paraheight = max(self.inner.height, int(self.fontSize * PARAHEIGHTCOEFF))
+        #paraheight = max(self.inner.height + self.inner.centerline, int(self.fontSize * PARAHEIGHTCOEFF))
+        paraheight = max(self.inner.height + self.inner.centerline, int(self.fontSize * .5))
         
         self.left = Symbol(openFname, PARANORMALWIDTHCOEFF*self.fontSize, paraheight, self.color)
         self.left.setCenter(y=0)
@@ -50,7 +51,9 @@ class ParenthesisLayout(Layout):
         self.right.paste(self.image, self.offset)
         self.inner.paste(self.image, self.offset)
 
-        self.setCenterLine((self.inner.height - paraheight) / 2)
+        self.image.save('para.png')
+
+        self.setCenterLine(self.inner.centerline)
 
 # class ParenthesisLayout:
 #     def __init__(self, parent, inner):
@@ -93,6 +96,8 @@ class SquareParenthesisLayout(Layout):
         self.left.paste(self.image, self.offset)
         self.right.paste(self.image, self.offset)
         self.inner.paste(self.image, self.offset)
+
+        self.setCenterLine(self.inner.centerline)
 
 
 MACROS["\\para"] = ParenthesisLayout

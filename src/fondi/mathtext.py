@@ -44,7 +44,6 @@ class MathText(Layout):
         # 0,4x^{3}+2*x^{2}+5*x+c_{0}
         # #super{0,4x}{3}#super{+2x}{2}#sub{+5*x+c_}{0}
         # just in time compiler?
-
         text = text.replace('*', '·')
         tokens = parse(text)
 
@@ -64,6 +63,7 @@ class MathText(Layout):
             elif clss == OPERATION:
                 self.line.append(PlainText(tok.replace('{','').replace('}', ''), self.fontSize, self.color, center=True))
 
+
     def __repr__(self):
         s = ''
         for i in self.line:
@@ -73,9 +73,18 @@ class MathText(Layout):
 
     def __draw__(self):
         # self.image = Image.new(IMGMODE, (int(self.width), int(self.height)))
-        
+        if len(self.text) == 0:
+            self.image = Image.new(IMGMODE, (0, 0))
+            self.width = 0
+            self.height = 0
+            return
+
+        maxCenterLine = 0
         for i, obj in enumerate(self.line): #objects ready to be assembled to the right
             obj.prepPasteLeft(self.line[i-1])
+            maxCenterLine = min(maxCenterLine, obj.centerline)
+
+        self.setCenterLine(maxCenterLine)
 
         x, y, x1, y1 = boundingBox(*self.line)
         self.width = x1 - x
