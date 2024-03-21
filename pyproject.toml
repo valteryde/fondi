@@ -1,8 +1,8 @@
 [project]
 name = "fondi"
-version = "0.0.2"
+version = "0.0.5"
 authors = [
-  { name="Valter Yde Daugberg", email="valter@hotmail.com" },
+  { name="Valter Yde Daugberg", email="valteryde@hotmail.com" },
 ]
 description = "A small rendering for LaTeX mathematics"
 readme = "README.md"
