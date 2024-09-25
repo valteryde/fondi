@@ -56,9 +56,12 @@ class TestMethods(unittest.TestCase):
 
     def test18x(self):
         self.__createMathText__('18x+\\ln{2 \\cdot x}', 'images/18x.png')
+    
+    def testRandomError(self):
+        self.__createMathText__('(x^2-9)\\cdot (x+4)=0', 'images/error2.png')
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # unittest.main()
     #TestMethods().testIntegral()
-    #TestMethods().test18x()
+    TestMethods().testRandomError()

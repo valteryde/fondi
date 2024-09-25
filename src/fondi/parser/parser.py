@@ -8,7 +8,7 @@ def dump(tokens):
     s = ''
     for tp, token in tokens:
 
-        if tp in [PLAINTEXT, OPERATION, COMMAND]:
+        if tp in [PLAINTEXT, OPERATION, COMMAND, BIDIRECTIONALCMD]:
             s += token
 
         if tp == FULLCOMMAND:
@@ -342,6 +342,7 @@ def parse(expr):
     tokens = tokenize(expr)
     tokens = combine(tokens)
     tokens = translate(tokens)
+    print(expr,tokens)
     tokens = catchDoubleBiCommands(tokens)
     tokens = rearrangeBidirection(tokens)
     tokens = combine(tokens)
