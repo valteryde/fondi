@@ -342,7 +342,6 @@ def parse(expr):
     tokens = tokenize(expr)
     tokens = combine(tokens)
     tokens = translate(tokens)
-    print(expr,tokens)
     tokens = catchDoubleBiCommands(tokens)
     tokens = rearrangeBidirection(tokens)
     tokens = combine(tokens)
