@@ -2,7 +2,7 @@
 
 A simple mathematical LaTeX render for python
 
-![Nested layouts](tests/para.png)
+<!-- ![Nested layouts](tests/para.png) -->
 
 ![Super- and subscript](tests/images/supersub.png)
 

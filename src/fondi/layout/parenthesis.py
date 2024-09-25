@@ -51,7 +51,7 @@ class ParenthesisLayout(Layout):
         self.right.paste(self.image, self.offset)
         self.inner.paste(self.image, self.offset)
 
-        self.image.save('para.png')
+        #self.image.save('para.png')
 
         self.setCenterLine(self.inner.centerline)
 
