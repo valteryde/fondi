@@ -30,6 +30,7 @@ TOKENS = {
     "\\sin": (COMMAND, 1),
     "\\cos": (COMMAND, 1),
     "\\tan": (COMMAND, 1),
+    "\\cdot": (COMMAND, 0),
     "\\text": (COMMAND, 1),
     "\\sqrt": (COMMAND, 1),
     "\\quad": (COMMAND, 0),

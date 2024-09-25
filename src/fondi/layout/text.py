@@ -32,6 +32,10 @@ class Tan(MathText):
     def __init__(self, parent, inner=""):
         super().__init__('\\text{tan}'+inner, parent.fontSize, color=parent.color)
 
+class Cdot(MathText):
+    def __init__(self, parent):
+        super().__init__('*', parent.fontSize, color=parent.color)
+        self.setCenterLine(parent.fontSize/4) # ingen ide hvorfor /4
 
 MACROS["\\text"] = StandardText
 MACROS["\\ln"] = Ln
@@ -39,8 +43,7 @@ MACROS["\\log"] = Ln
 MACROS["\\sin"] = Sin
 MACROS["\\cos"] = Cos
 MACROS["\\tan"] = Tan
-
-
+MACROS["\\cdot"] = Cdot
 
 #     "\\frac": FracLayout,
 #     "\\super": SuperLayout,

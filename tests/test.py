@@ -55,7 +55,7 @@ class TestMethods(unittest.TestCase):
         self.__createMathText__('100\\qquad000', 'images/10000f.png')
 
     def test18x(self):
-        self.__createMathText__('18x+\\ln{2*x}', 'images/18x.png')
+        self.__createMathText__('18x+\\ln{2 \\cdot x}', 'images/18x.png')
 
 
 if __name__ == '__main__':
