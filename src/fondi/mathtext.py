@@ -49,8 +49,8 @@ class MathText(Layout):
 
         self.line = []
         for clss, tok in tokens:
-            if tok == " ": continue
-
+            if tok == " " or tok == "": continue
+            
             if clss == PLAINTEXT: # it is not an argument
                 self.line.append(PlainText(tok.replace('{','').replace('}', ''), self.fontSize, self.color))
 

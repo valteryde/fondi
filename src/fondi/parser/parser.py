@@ -133,7 +133,6 @@ def tokenize(raw):
 
         # else
         tokens.append((PLAINTEXT,raw[i]))
-
     
     # tjek for ord
     # newtokens = []
@@ -286,19 +285,30 @@ def rearrangeBidirection(tokens):
     return newtokens
 
 
+NUMBERSCHAR = '0123456789.'
 def combineCharsToWords(tokens):
     if len(tokens) == 0: return tokens
 
     newtokens = [tokens[0]]
     aloneList = [" ", ","]
+    try:
+        lastIsNumber = tokens[0][1] in NUMBERSCHAR
+    except:
+        lastIsNumber = False
 
     for tp, tok in tokens[1:]:
+        try:
+            currentIsNumber = tok in NUMBERSCHAR
+        except:
+            currentIsNumber = False
 
-        if tp != PLAINTEXT or newtokens[-1][0] != PLAINTEXT or tok in aloneList:
+        if tp != PLAINTEXT or newtokens[-1][0] != PLAINTEXT or tok in aloneList or lastIsNumber != currentIsNumber:
+            lastIsNumber = currentIsNumber
             newtokens.append((tp, tok))
             continue
         
         if newtokens[-1][1] in aloneList:
+            lastIsNumber = currentIsNumber
             newtokens.append((tp, tok))
             continue
         

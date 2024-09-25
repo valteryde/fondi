@@ -17,6 +17,7 @@ def isNum(x:str) -> bool:
 # ------------------------------------------------------------------------------
 # |                               Standard Text                                |
 # ------------------------------------------------------------------------------
+# tal må ikke være italic!
 class PlainText(Layout):
     
     def __init__(self, text, fontSize, color, center=False, italic=True):
@@ -30,6 +31,12 @@ class PlainText(Layout):
 
         winSize = (fontSize*3*len(text),fontSize*3*len(text))
         self.image = Image.new("RGBA", winSize, color=(0,0,0,0))
+        
+        if len(text) == 0:
+            self.width = 0
+            self.height = 0
+            return
+
         draw = ImageDraw.Draw(self.image)
         
         if isNum(text) or text in REGULAR or (not italic):

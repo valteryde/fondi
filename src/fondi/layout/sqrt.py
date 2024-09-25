@@ -65,7 +65,7 @@ class SqrtLayout(Layout):
         line1 = (0,self.height/2), (math.cos(self.angle)*c/2, self.height)
         line2 = line1[1], (math.cos(self.angle)*c+line1[0][0], 0)
 
-        self.width = int(self.inner.height + self.linewidth*2 + line2[1][0] + self.padding)
+        self.width = int(self.inner.width + self.linewidth*2 + line2[1][0] + self.padding)
 
         line3 = line2[1], (self.width, line2[1][1])
         
@@ -73,10 +73,6 @@ class SqrtLayout(Layout):
 
         self.inner.setBottom(0)
         self.inner.setLeft(line3[0][0]+self.padding/2)
-
-        print(line1)
-        print(line2)
-
 
         self.image = Image.new('RGBA', (self.width, self.height))
         draw = ImageDraw.ImageDraw(self.image)

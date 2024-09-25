@@ -36,10 +36,15 @@ class TestMethods(unittest.TestCase):
         self.__createMathText__('R^2=0,9281', 'images/rsquared.png')
     
     def testSquareRoot(self):
-        self.__createMathText__('\\sqrt{10^{2}}=10', 'images/sqrt.png')
+        self.__createMathText__('\\sqrt{10^{2+1}}', 'images/sqrt.png')
     
-    def testSquareRoot(self):
-        self.__createMathText__('\\text{sin}(\\frac{x^2 + (10+2)_{hej}}{\\frac{2}{x}_{i,j}})', 'images/para.png')
+    def testSomethingCrazy(self):
+        self.__createMathText__('\\sin(\\frac{x^2 + (10+2)_{hej}}{\\frac{2}{x}_{i,j}})', 'images/para.png')
+
+    def testIntegral(self):
+        return
+        self.__createMathText__('\\int{2x}{dx}', 'images/integral.png')
+
 
     def testSpaces(self):
         self.__createMathText__('100\\quad000', 'images/10000a.png')
@@ -49,6 +54,11 @@ class TestMethods(unittest.TestCase):
         self.__createMathText__('100\\smallSpace000', 'images/10000e.png')
         self.__createMathText__('100\\qquad000', 'images/10000f.png')
 
+    def test18x(self):
+        self.__createMathText__('18x+\\ln{2*x}', 'images/18x.png')
+
+
 if __name__ == '__main__':
     unittest.main()
-    # TestMethods().testSpaces()
+    #TestMethods().testIntegral()
+    #TestMethods().test18x()
