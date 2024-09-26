@@ -35,7 +35,7 @@ class Tan(MathText):
 class Cdot(MathText):
     def __init__(self, parent):
         super().__init__('*', parent.fontSize, color=parent.color)
-        self.setCenterLine(parent.fontSize/4) # ingen ide hvorfor /4
+        self.setBottomLineDiffrence(parent.fontSize/4) # ingen ide hvorfor /4
 
 MACROS["\\text"] = StandardText
 MACROS["\\ln"] = Ln

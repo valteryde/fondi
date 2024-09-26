@@ -2,32 +2,35 @@
 import sys
 sys.path.append('../src')
 
-import unittest
 import fondi
 
-class TestMethods(unittest.TestCase):
+class TestMethods:
+
+    def run(self):
+        [eval('TestMethods().{}()'.format(i)) for i in dir(self) if 'test' in i]
 
     def __createMathText__(self, mathtext, filename, fontsize=50, color=(255,255,255,255)):
         txt = fondi.MathText(mathtext, fontsize, color)
         txt.image.save(filename)
+        
 
     def testPolynomen(self):
         self.__createMathText__('2*x_{5}^{2}+7^{2}_{1}', 'images/polynomen.png')
 
     def testCases(self):
-        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{else}', 'images/cases.png')
+        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{\\text{else}}', 'images/cases.png')
     
     def testNestedFraction(self):
         self.__createMathText__('10+\\frac{\\frac{1}{2}}{x}', 'images/nested_fraction.png')
 
     def testBigFont(self):
-        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{else}', 'images/bigfont.png', 200)
+        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{\\text{else}}', 'images/bigfont.png', 200)
     
     def testSmallFont(self):
-        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{else}', 'images/smallfont.png', 16)
+        self.__createMathText__('f(x^2)=\\cases{2*x}{10>x}{[2^{x}]}{10<x}{\\frac{1}{2}}{\\text{else}}', 'images/smallfont.png', 16)
 
     def testSuperSuber(self):
-        self.__createMathText__('0,4x^{3}+2*x^{2}+5*x+c_{0}+5^{2}_{x}', 'images/supersub.png')
+        self.__createMathText__('0,4x^{3}+2*x^{2}+5*x_{n-1}+b_{a}+c_{0}+5^{2}_{x}', 'images/supersub.png')
     
     def testrsquared(self):
         self.__createMathText__('R^2=0,9281', 'images/rsquared.png')
@@ -42,8 +45,7 @@ class TestMethods(unittest.TestCase):
         self.__createMathText__('\\sin(\\frac{x^2 + (10+2)_{hej}}{\\frac{2}{x}_{i,j}})', 'images/para.png')
 
     def testIntegral(self):
-        return
-        self.__createMathText__('\\int{2x}{dx}', 'images/integral.png')
+        self.__createMathText__('5x+\\int{2x}{dx} + 7x \\int{x^2}{dx}_{-2}^{2}', 'images/integral.png')
 
 
     def testSpaces(self):
@@ -60,8 +62,16 @@ class TestMethods(unittest.TestCase):
     def testRandomError(self):
         self.__createMathText__('(x^2-9)\\cdot (x+4)=0', 'images/error2.png')
 
+    def testcauchysIntegralFormula(self):
+        self.__createMathText__('f(z_0)=\\frac{1}{2 \\pi i}\\oint{\\frac{f(z)}{z-z_0}}{\\text{d}z}_{C}', 'images/cauchyesintegralformula.png')
+        #self.__createMathText__('\\oint{\\frac{f(z)}{z-z_0}}{\\text{d}z}_{C}', 'images/cauchyesintegralformula.png')
+
+    def testPara(self):
+        self.__createMathText__("f'(x_0)+f(x_0)+\\int{f(x_0)}{dx}", 'images/paras.png')
+
 
 if __name__ == '__main__':
-    # unittest.main()
+    TestMethods().run()
+    #TestMethods().testPara()
+    #TestMethods().cauchysIntegralFormula()
     #TestMethods().testIntegral()
-    TestMethods().testRandomError()

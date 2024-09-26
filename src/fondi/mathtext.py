@@ -82,9 +82,9 @@ class MathText(Layout):
         maxCenterLine = 0
         for i, obj in enumerate(self.line): #objects ready to be assembled to the right
             obj.prepPasteLeft(self.line[i-1])
-            maxCenterLine = min(maxCenterLine, obj.centerline)
+            maxCenterLine = min(maxCenterLine, obj.bottomLineDiffrence)
 
-        self.setCenterLine(maxCenterLine)
+        self.setBottomLineDiffrence(maxCenterLine)
 
         x, y, x1, y1 = boundingBox(*self.line)
         self.width = x1 - x

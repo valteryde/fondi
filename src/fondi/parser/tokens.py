@@ -1,4 +1,6 @@
 
+import math
+
 BIDIRECTIONALCMD = 'bicmd'
 COMMAND = 'macro'
 FULLCOMMAND = 'fmacro'
@@ -23,8 +25,9 @@ TOKENS = {
     "\\subsuper": (COMMAND, 3),
     "\\para": (COMMAND, 1),
     "\\squarepara": (COMMAND, 1),
-    "\\cases": (COMMAND, 2),
+    "\\cases": (COMMAND, math.inf),
     "\\int": (COMMAND, 2),
+    "\\oint": (COMMAND, 2),
     "\\ln": (COMMAND, 1),
     "\\log": (COMMAND, 1),
     "\\sin": (COMMAND, 1),

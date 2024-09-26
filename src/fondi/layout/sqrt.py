@@ -7,44 +7,6 @@ from ..mathtext import MathText
 from PIL import Image, ImageDraw
 import math
 
-#         super().__init__()
-
-#         self.fontSize = parent.fontSize
-#         self.color = parent.color
-
-#         self.top = MathText(top, int(self.fontSize*FRACSHRINKCOEFF), self.color)
-#         self.bottom = MathText(bottom, int(self.fontSize*FRACSHRINKCOEFF), self.color)
-
-#         linewidth = int(FRACFONTWIDTHCOEFF * self.fontSize)
-#         self.padding = FRACPADDINGCOEFF * self.fontSize + linewidth/2
-#         self.width = max(self.bottom.width, self.top.width)
-#         self.height = self.bottom.height + self.top.height + self.padding * 2
-
-#         # draw
-#         self.image = Image.new(IMGMODE, (int(self.width), int(self.height)))
-
-#         self.top.setBottom(self.padding)
-#         self.top.setCenter(x=self.width/2)
-        
-#         self.bottom.setTop(-self.padding)
-#         self.bottom.setCenter(x=self.width/2)
-
-#         x, y, x1, y1 = boundingBox(self.bottom, self.top)
-#         self.setCenterLine(y + self.fontSize/4)
-
-#         # paste
-#         self.top.paste(self.image, (x,y))
-#         self.bottom.paste(self.image, (x,y))
-
-#         # draw line
-#         imd = ImageDraw.ImageDraw(self.image)
-#         imd.line((0, self.height+y, self.width, self.height+y), self.color, width=linewidth)
-
-#         self.image = replaceColorRandom(self.image)
-#         #self.image.save('debug/test-frac.png')
-
-
-
 class SqrtLayout(Layout):
     def __init__(self, parent, *args):
         super().__init__()

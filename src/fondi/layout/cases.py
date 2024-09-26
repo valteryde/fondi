@@ -66,7 +66,7 @@ class Cases(Layout):
             left.paste(self.image, self.offset)
             right.paste(self.image, self.offset)
 
-        self.setCenterLine(-self.height/2 + self.fontSize/4) # HVORFOR 4????
+        self.setBottomLineDiffrence(-self.height/2 + self.fontSize/4) # HVORFOR 4????
 
         #self.image.save('debug/cases.png')
 

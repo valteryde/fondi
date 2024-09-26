@@ -2,6 +2,10 @@
 from PIL import ImageDraw, Image, ImageFont
 import math
 
+import sys
+DEBUGFLAG = '--debug' in sys.argv
+
+
 # layout
 def getTextDimension(text, fontSize):
 

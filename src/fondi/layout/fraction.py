@@ -36,7 +36,7 @@ class FracLayout(Layout):
         self.bottom.setCenter(x=self.width/2)
 
         x, y, x1, y1 = boundingBox(self.bottom, self.top)
-        self.setCenterLine(y + self.fontSize/4)
+        self.setBottomLineDiffrence(y + self.fontSize/4)
 
         # paste
         self.top.paste(self.image, (x,y))

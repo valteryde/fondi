@@ -13,6 +13,7 @@ class Symbol(Layout):
 
         self.fname = fname
         self.image = Image.open(loadFile(fname))
+        self.image = self.image.convert('RGBA')
 
         self.color = color
         data = np.array(self.image)

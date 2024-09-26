@@ -1,21 +1,19 @@
 
 from .tokens import *
-from .helper import cprint
-
+from .helper import cprint, DEBUGFLAG, NOPRINTFLAG
 
 def dump(tokens):
     
     s = ''
     for tp, token in tokens:
 
-        if tp in [PLAINTEXT, OPERATION, COMMAND, BIDIRECTIONALCMD]:
+        if tp in [PLAINTEXT, OPERATION, COMMAND, BIDIRECTIONALCMD, ARGUMENT]:
             s += token
 
         if tp == FULLCOMMAND:
             s += token["name"] + '{' + '}{'.join(token["args"]) + '}'
 
     return s
-
 
 
 def getClosingChar(txt, close='}', open_='{'):
@@ -319,11 +317,13 @@ def combineCharsToWords(tokens):
 
 def parse_(expr):
     print('---------S---------')
-    expr = translate(expr)
+    
     print(expr)
     tokens = tokenize(expr)
     cprint(tokens)
     tokens = combine(tokens)
+    cprint(tokens)
+    tokens = translate(tokens)
     cprint(tokens)
     tokens = catchDoubleBiCommands(tokens)
     cprint(tokens)
@@ -331,8 +331,9 @@ def parse_(expr):
     cprint(tokens)
     tokens = combine(tokens)
     cprint(tokens)
+    tokens = combineCharsToWords(tokens)
+    cprint(tokens)
 
-    print(expr, tokens)
     print('---------E----------')
 
     return tokens
@@ -348,3 +349,7 @@ def parse(expr):
     tokens = combineCharsToWords(tokens)
 
     return tokens
+
+
+if DEBUGFLAG and not NOPRINTFLAG:
+    parse = parse_

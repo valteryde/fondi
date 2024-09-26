@@ -1,5 +1,8 @@
 
 from .tokens import *
+import sys
+DEBUGFLAG = '--debug' in sys.argv
+NOPRINTFLAG = '--noprint' in sys.argv
 
 # parser
 # def getParameters(text, count=-1, openchar='{', closechar='}'):
@@ -32,7 +35,10 @@ def cprint(l):
     s = ''
     for clss, tok in l:
 
-        if clss == FULLCOMMAND:
+        if clss[0] == COMMAND:
+            s += TOKENSCOLOR[clss[0]] + tok + '\033[0m'
+
+        elif clss == FULLCOMMAND:
             s += TOKENSCOLOR[clss] + tok["name"] +''.join(['{'+i+'}' for i in tok["args"]]) + '\033[0m'
 
         elif clss == ARGUMENT:

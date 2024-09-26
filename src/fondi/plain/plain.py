@@ -69,7 +69,7 @@ class PlainText(Layout):
         self.width = self.image.width
         self.height = self.image.height
 
-        self.setCenterLine(-lowerOffset)
+        self.setBottomLineDiffrence(-lowerOffset)
 
         self.image = replaceColorRandom(self.image)
         #self.image.save('debug/test-plain-{}.png'.format(str(self.text)))
