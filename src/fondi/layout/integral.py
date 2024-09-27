@@ -7,7 +7,7 @@ from ..mathtext import MathText
 from PIL import Image
 
 INTEGRALSYMBOLSIZEFACTOR = 2
-INTEGRALSYMBOLASPECTRATIO = .5
+INTEGRALSYMBOLASPECTRATIO = .4
 INTEGRALLOWEROFFSET = .45
 
 class IntegralLayout(Layout):
