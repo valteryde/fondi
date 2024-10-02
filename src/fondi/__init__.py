@@ -1,6 +1,6 @@
 
 from .mathtext import MathText
-from .parser import parse
+from .parser import *
 from .layout.parenthesis import ParenthesisLayout
 from .layout.fraction import FracLayout
 from .layout.supersub import SubLayout, SuperLayout, SuperSubLayout, SubSuperLayout

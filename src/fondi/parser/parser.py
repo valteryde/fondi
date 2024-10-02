@@ -199,45 +199,46 @@ def combine(tokens):
     return newtokens
 
 
-def catchDoubleBiCommands(tokens): #kan godt laves to multiple
-    """
-    altså helt ærligt kan jeg kun komme på et dumt eksempel
-
-    x_{5}^{2} skal IKKE være 2*\super{\sub{x}{5}}{2}
-    men istedet være en ny kommando \supersub{x}{5}{2}
-
-    Burde også kun kunne ske ved bidirektionel kommandoer
-    """
-
+def catchDoubleBiCommands(tokens):
+    
+    offset = 0
     newtokens = []
-    ignoreCount = 0
-    for i, tok in enumerate(tokens):
+    for j in range(len(tokens)):
+        i = j + offset
 
-        if tok[0] == BIDIRECTIONALCMD:
+        if i >= len(tokens):
+            break
 
-            if ignoreCount > 0:
-                ignoreCount -= 1
+        tp, tok = tokens[i]
+
+        if tp == BIDIRECTIONALCMD:
+            # guard clauses
+            
+            # hvis der ikke er mere af listen
+            if i+2 >= len(tokens):
+                newtokens.append((tp, tok))
                 continue
 
-            # gå frem i sætningen og se om der kommer en makker
-            for subtokNum, subtok in enumerate(tokens[i:]):
-                if subtok[0] == BIDIRECTIONALCMD:
-                    
-                    combinedCommandName = DOUBLECOMMANDS.get((tok[1],subtok[1]), None)
-                    if combinedCommandName:
-                        ignoreCount = 1
-                        newtokens.append((BIDIRECTIONALCMD,combinedCommandName))
-                        break
-
-                elif subtok[0] != ARGUMENT:
-                    break
-
-            if not combinedCommandName:
-                newtokens.append(tok)
-
-            continue
+            # tjek om i+2 også er en BIDIRECTIONALCMD
+            if tokens[i+2][0] != BIDIRECTIONALCMD:
+                newtokens.append((tp, tok))
+                continue
+                
+            # tjek om den kan samles
+            double = (tok, tokens[i+2][1])
+            if double not in DOUBLECOMMANDS.keys():
+                newtokens.append((tp, tok))
+                continue
         
-        newtokens.append(tok)
+            newtokens.append((BIDIRECTIONALCMD, DOUBLECOMMANDS[double]))
+            newtokens.append((ARGUMENT, tokens[i+1][1]))
+            newtokens.append((ARGUMENT, tokens[i+3][1]))
+
+            #newtokens.append(tok)
+            #newtokens.append()
+            offset += 3
+        else:
+            newtokens.append((tp, tok))
 
     return newtokens
 
