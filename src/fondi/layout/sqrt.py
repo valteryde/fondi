@@ -18,6 +18,7 @@ class SqrtLayout(Layout):
 
         self.linewidth = 3
         self.fontSize = parent.fontSize
+        self.color = parent.color
         self.padding = self.fontSize//5
         self.height = int(self.inner.height+self.padding)
 
@@ -41,7 +42,7 @@ class SqrtLayout(Layout):
 
         self.inner.paste(self.image, (0,0))
 
-        draw.line(lines, fill=(255,255,255,255), width=self.linewidth, joint="curve")
+        draw.line(lines, fill=self.color, width=self.linewidth, joint="curve")
 
 
 MACROS["\\sqrt"] = SqrtLayout

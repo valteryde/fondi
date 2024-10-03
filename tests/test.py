@@ -48,6 +48,8 @@ class TestMethods:
     def testIntegral(self):
         self.__createMathText__('5x+\\int{2x}{dx} + 7x \\int{x^2}{dx}_{-2}^{2}', 'images/integral.png')
         self.__createMathText__('\\int_{-2}^{2} x^2 dx + \\int_a^b x dx', 'images/integral2.png')
+        self.__createMathText__('\\int 3 \\sqrt{x} + e^{3 x} dx', 'images/integral3.png')
+        self.__createMathText__('\\text{Bestem }\\int 3 \\sqrt{x} + e^{3 x} dx\\text{}', 'images/integral4.png')
 
 
     def testSpaces(self):
@@ -74,15 +76,17 @@ class TestMethods:
 
 
 if __name__ == '__main__':
-    TestMethods().run()
+    #TestMethods().run()
     #TestMethods().testPara()
     #TestMethods().cauchysIntegralFormula()
+    TestMethods().testIntegral()
     #fondi.MathText('a^b_c', 64, (255,255,255,255))
     #[('char', 'a'), ('bicmd', '^_'), ('arg', 'b'), ('arg', 'c')]
 
     #fondi.catchDoubleBiCommands([('char', 'a'), ('bicmd', '^'), ('arg', 'b'), ('bicmd', '_'), ('arg', 'c'), ('char', '+d')])
 
     #fondi.MathText('a^b_c', 64, (255,255,255,255))
+    
     
     
 
