@@ -2,6 +2,7 @@
 from PIL import ImageDraw, Image, ImageFont
 import math
 
+
 import sys
 DEBUGFLAG = '--debug' in sys.argv
 
@@ -30,3 +31,4 @@ def boundingBox(*objs):
         bounding[3] = max(bounding[3], y1)
 
     return bounding
+

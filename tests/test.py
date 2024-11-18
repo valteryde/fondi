@@ -72,12 +72,13 @@ class TestMethods:
 
     def testPara(self):
         self.__createMathText__("f'(x_0)+f(x_0)+\\int{f(x_0)}{dx}", 'images/paras.png')
+        self.__createMathText__("f\\prime \\left(x_0 \\right)+f(x_0)+\\int{f(x_0)}{\differentialD x}", 'images/parasleftright.png')
 
 
 
 if __name__ == '__main__':
     #TestMethods().run()
-    #TestMethods().testPara()
+    TestMethods().testPara()
     #TestMethods().cauchysIntegralFormula()
     TestMethods().testIntegral()
     #fondi.MathText('a^b_c', 64, (255,255,255,255))

@@ -95,6 +95,10 @@ TOKENS["\\psi"] = (COMMAND, 0)
 TOKENS["\\omega"] = (COMMAND, 0)
 TOKENS["\\Omega"] = (COMMAND, 0)
 TOKENS["\\pi"] = (COMMAND, 0)
+TOKENS["\\prime"] = (COMMAND, 0)
+TOKENS["\\left"] = (COMMAND, 0)
+TOKENS["\\right"] = (COMMAND, 0)
+TOKENS["\\differentialD"] = (COMMAND, 0)
 
 ### ESCAPE TOKENS
 TOKENS["\\{"] = (COMMAND, 0)

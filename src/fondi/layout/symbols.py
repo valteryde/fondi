@@ -4,6 +4,7 @@ from ..mathtext import MathText
 from ..plain.helper import replaceColorRandom
 from ..plain import Symbol, PlainText
 from .helper import boundingBox
+from .ignore import Ignore
 from PIL import Image, ImageDraw
 #https://www.ascii-code.com/characters/greek
 
@@ -95,6 +96,12 @@ class Pi(PlainText):
     def __init__(self, parent):
         super().__init__('π', parent.fontSize, parent.color)
 
+class Prime(PlainText):
+    def __init__(self, parent):
+        super().__init__("'", parent.fontSize, parent.color)
+
+
+
 MACROS["\\alpha"] = Alpha
 MACROS["\\beta"] = Beta
 MACROS["\\gamma"] = Gamma
@@ -116,6 +123,7 @@ MACROS["\\psi"] = Psi
 MACROS["\\omega"] = Omega
 MACROS["\\Omega"] = UOmega
 MACROS["\\pi"] = Pi
+MACROS["\\prime"] = Prime
 
 ### ESCAPES
 class StartCurlyBracket(PlainText):
@@ -143,9 +151,18 @@ class EndBracket(PlainText):
         super().__init__(')', parent.fontSize, parent.color)
 
 
+
 MACROS["\\{"] = StartCurlyBracket
 MACROS["\\}"] = EndCurlyBracket
 MACROS["\\("] = StartBracket
 MACROS["\\)"] = EndBracket
 MACROS["\\["] = StartSquareBracket
 MACROS["\\]"] = EndSquareBracket
+MACROS["\\left"] = Ignore
+MACROS["\\right"] = Ignore
+
+class DifferentialD(PlainText):
+    def __init__(self, parent):
+        super().__init__("d", parent.fontSize, parent.color, italic=False)
+
+MACROS["\\differentialD"] = DifferentialD
