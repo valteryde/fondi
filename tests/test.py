@@ -1,9 +1,12 @@
 
 import sys
+import pathlib
 
-sys.path.append('../src')
+BASEDIR = pathlib.Path(__file__).parent.resolve()
+sys.path.append(str(BASEDIR / '..' / 'src'))
 
 import fondi
+
 
 class TestMethods:
 
@@ -12,7 +15,7 @@ class TestMethods:
 
     def __createMathText__(self, mathtext, filename, fontsize=50, color=(255,255,255,255)):
         txt = fondi.MathText(mathtext, fontsize, color)
-        txt.image.save(filename)
+        txt.image.save(BASEDIR / filename)
         
 
     def testPolynomen(self):
@@ -72,15 +75,21 @@ class TestMethods:
 
     def testPara(self):
         self.__createMathText__("f'(x_0)+f(x_0)+\\int{f(x_0)}{dx}", 'images/paras.png')
-        self.__createMathText__("f\\prime \\left(x_0 \\right)+f(x_0)+\\int{f(x_0)}{\differentialD x}", 'images/parasleftright.png')
+        self.__createMathText__("f\\prime \\left(x_0 \\right)+f(x_0)+\\int{f(x_0)}{\\differentialD x}", 'images/parasleftright.png')
+
+
+    def testDotAndTilde(self):
+        self.__createMathText__("\\dot{x} + \\ddot{y} + \\tilde{z} + \\bar{a}", 'images/dot_tilde_bar.png')
+        self.__createMathText__("\\dot{\\dot{x}} + a_{\\tilde{k_v}} + \\tilde{z} + \\bar{a}", 'images/dot_tilde_bar_2.png')
 
 
 
 if __name__ == '__main__':
-    #TestMethods().run()
-    TestMethods().testPara()
+    TestMethods().run()
+    #TestMethods().testPara()
     #TestMethods().cauchysIntegralFormula()
-    TestMethods().testIntegral()
+    # TestMethods().testIntegral()
+    TestMethods().testDotAndTilde()
     #fondi.MathText('a^b_c', 64, (255,255,255,255))
     #[('char', 'a'), ('bicmd', '^_'), ('arg', 'b'), ('arg', 'c')]
 

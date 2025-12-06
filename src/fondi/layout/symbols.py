@@ -82,7 +82,7 @@ class Chi(PlainText):
 
 class Psi(PlainText):
     def __init__(self, parent):
-        super().__init__('Ψ', parent.fontSize, parent.color)
+        super().__init__('ψ', parent.fontSize, parent.color)
 
 class Omega(PlainText):
     def __init__(self, parent):

@@ -10,3 +10,4 @@ from .layout.text import StandardText
 from .layout.sqrt import SqrtLayout
 from .layout.spaces import Space
 from .layout.integral import IntegralLayout
+from .layout.decoration import *
