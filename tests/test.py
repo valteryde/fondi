@@ -83,6 +83,9 @@ class TestMethods:
         self.__createMathText__("\\dot{\\dot{x}} + a_{\\tilde{k_v}} + \\tilde{z} + \\bar{a}", 'images/dot_tilde_bar_2.png')
 
 
+    def testSubscriptMultipleCharacters(self):
+        self.__createMathText__('a_{ijk} + b^{xyz} + c_{a+b}^{m+n} + a_{bc_{ak}}', 'images/subscript_multiple_characters.png')
+
 
 if __name__ == '__main__':
     TestMethods().run()
