@@ -1,13 +1,14 @@
 
-from PIL import Image
 from .helper import boundingBox
-from .layout import Layout, IMGMODE, MACROS
+from .layout import Layout, MACROS
 from ..mathtext import MathText
+from .scene_builder import collect_children
 from ..parser.parser import parse
 from ..parser.tokens import ARGUMENT, FULLCOMMAND
 
 SUBSUPSIZE = 0.75
 SUBSUPPOS = 0.25
+
 
 def determineSuberSubHandledInteranally(parent, tokens, lower="", upper=""):
     if len(tokens) == 0:
@@ -17,7 +18,7 @@ def determineSuberSubHandledInteranally(parent, tokens, lower="", upper=""):
 
     if len(tokens) > 1:
         return
-    
+
     tokens = tokens[0]
 
     if tokens[0] == ARGUMENT:
@@ -28,9 +29,10 @@ def determineSuberSubHandledInteranally(parent, tokens, lower="", upper=""):
 
         tokens = tokens[0]
 
-    #>>-->
     if tokens[0] == FULLCOMMAND:
-        return MACROS[tokens[1]["name"]].handleSuperSub(parent, tokens[1]["args"], lower, upper)
+        return MACROS[tokens[1]["name"]].handleSuperSub(
+            parent, tokens[1]["args"], lower, upper
+        )
 
 
 class SuperLayout(Layout):
@@ -38,34 +40,33 @@ class SuperLayout(Layout):
     def __init__(self, parent, base, upper):
         super().__init__()
 
-        r = determineSuberSubHandledInteranally(parent, base, '', upper)
-        if r: return self.copy(r)
+        r = determineSuberSubHandledInteranally(parent, base, "", upper)
+        if r:
+            return self.copy(r)
 
         self.fontSize = parent.fontSize
         self.color = parent.color
 
         self.base = MathText(base, self.fontSize, self.color)
-        self.base.setCenter(0,0)
-        self.upper = MathText(upper, int(self.fontSize*SUBSUPSIZE), self.color)
+        self.base.setCenter(0, 0)
+        self.upper = MathText(upper, int(self.fontSize * SUBSUPSIZE), self.color)
 
-        self.upper.setBottom(int(self.base.height*SUBSUPPOS))
+        self.upper.setBottom(int(self.base.height * SUBSUPPOS))
         self.upper.setLeft(self.base.getRight())
         x, y, x1, y1 = boundingBox(self.base, self.upper)
 
-        self.offset = (x,y)
+        self._bbox_offset = (x, y)
         self.width = x1 - x
         self.height = y1 - y
+        self._children = (self.base, self.upper)
 
-        self.image = Image.new(IMGMODE, (int(self.width), int(self.height)))
-
-        self.base.paste(self.image, self.offset)
-        self.upper.paste(self.image, self.offset)
-
-        #self.image.save('debug/test-super.png')
-
+    def collect_scene(self, offset: tuple[float, float]) -> list:
+        ox, oy = offset
+        bx, by = self._bbox_offset
+        return collect_children((ox + bx, oy + by), *self._children)
 
     def __repr__(self):
-        return '({})^({})'.format(self.base, self.upper)
+        return "({})^{}({})".format(self.base, self.upper)
 
 
 class SubLayout(Layout):
@@ -73,85 +74,78 @@ class SubLayout(Layout):
     def __init__(self, parent, base, lower):
         super().__init__()
 
-        r = determineSuberSubHandledInteranally(parent, base, lower, '')
-        if r: return self.copy(r)
+        r = determineSuberSubHandledInteranally(parent, base, lower, "")
+        if r:
+            return self.copy(r)
 
         self.fontSize = parent.fontSize
         self.color = parent.color
 
         self.base = MathText(base, self.fontSize, self.color)
-        self.lower = MathText(lower, int(self.fontSize*SUBSUPSIZE), self.color)
-        self.base.setCenter(0,0)
+        self.lower = MathText(lower, int(self.fontSize * SUBSUPSIZE), self.color)
+        self.base.setCenter(0, 0)
 
-        self.lower.setTop(-int(self.base.height*SUBSUPPOS))
+        self.lower.setTop(-int(self.base.height * SUBSUPPOS))
         self.lower.setLeft(self.base.getRight())
         x, y, x1, y1 = boundingBox(self.base, self.lower)
 
-        self.offset = (x,y)
+        self._bbox_offset = (x, y)
         self.width = x1 - x
         self.height = y1 - y
-
-        self.image = Image.new(IMGMODE, (int(self.width), int(self.height)))
-
-        self.base.paste(self.image, self.offset)
-        self.lower.paste(self.image, self.offset)
-
-        #self.image.save('debug/test-super.png')
-
+        self._children = (self.base, self.lower)
         self.setBottomLineDiffrence(self.lower.getBottom() - self.base.getBottom())
 
+    def collect_scene(self, offset: tuple[float, float]) -> list:
+        ox, oy = offset
+        bx, by = self._bbox_offset
+        return collect_children((ox + bx, oy + by), *self._children)
 
     def __repr__(self):
-        return '({})_({})'.format(self.base, self.lower)
-
+        return "({})_({})".format(self.base, self.lower)
 
 
 class SubSuperLayout(Layout):
 
     def __init__(self, parent, base, lower, upper):
         super().__init__()
-        
+
         r = determineSuberSubHandledInteranally(parent, base, lower, upper)
-        if r: return self.copy(r)
+        if r:
+            return self.copy(r)
 
         self.fontSize = parent.fontSize
         self.color = parent.color
 
         self.base = MathText(base, self.fontSize, self.color)
-        self.upper = MathText(upper, int(self.fontSize*SUBSUPSIZE), self.color)
-        self.lower = MathText(lower, int(self.fontSize*SUBSUPSIZE), self.color)
-        self.base.setCenter(0,0)
+        self.upper = MathText(upper, int(self.fontSize * SUBSUPSIZE), self.color)
+        self.lower = MathText(lower, int(self.fontSize * SUBSUPSIZE), self.color)
+        self.base.setCenter(0, 0)
 
-        self.upper.setBottom(int(self.base.height*SUBSUPPOS))
+        self.upper.setBottom(int(self.base.height * SUBSUPPOS))
         self.upper.setLeft(self.base.getRight())
-        self.lower.setTop(-int(self.base.height*SUBSUPPOS))
+        self.lower.setTop(-int(self.base.height * SUBSUPPOS))
         self.lower.setLeft(self.base.getRight())
         x, y, x1, y1 = boundingBox(self.base, self.upper, self.lower)
 
-        #self.setOffset(0,-100)
+        self._bbox_offset = (x, y)
         self.width = x1 - x
         self.height = y1 - y
-        self.offset = (x,y)
-        self.setBottomLineDiffrence(y)
-
-        self.image = Image.new(IMGMODE, (int(self.width), int(self.height)))
-
-        self.base.paste(self.image, self.offset)
-        self.upper.paste(self.image, self.offset)
-        self.lower.paste(self.image, self.offset)
-
+        self._children = (self.base, self.upper, self.lower)
         self.setBottomLineDiffrence(self.lower.getBottom() - self.base.getBottom())
 
-        #self.image.save('debug/test-super.png')
-        
+    def collect_scene(self, offset: tuple[float, float]) -> list:
+        ox, oy = offset
+        bx, by = self._bbox_offset
+        return collect_children((ox + bx, oy + by), *self._children)
 
     def __repr__(self):
-        return '{}^{}_{}'.format(self.base, self.upper, self.lower)
+        return "{}^{}_{}".format(self.base, self.upper, self.lower)
 
 
 class SuperSubLayout(SubSuperLayout):
     def __init__(self, parent, base, upper, lower):
         super().__init__(parent, base, lower, upper)
+
 
 MACROS["\\sub"] = SubLayout
 MACROS["\\super"] = SuperLayout

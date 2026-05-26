@@ -3,7 +3,7 @@ import sys
 import pathlib
 
 BASEDIR = pathlib.Path(__file__).parent.resolve()
-sys.path.append(str(BASEDIR / '..' / 'src'))
+sys.path.insert(0, str(BASEDIR / '..' / 'src'))
 
 import fondi
 

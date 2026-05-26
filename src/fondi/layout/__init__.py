@@ -1,2 +1,2 @@
 
-from .layout import MACROS, IMGMODE, Layout
+from .layout import MACROS, Layout
