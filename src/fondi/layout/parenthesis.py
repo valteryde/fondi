@@ -106,15 +106,23 @@ class SquareParenthesisLayout(Layout):
         self.height = y1 - y
         self.setBottomLineDiffrence(self.inner.bottomLineDiffrence)
 
-    def _bracket_rects(self, left_x: float, bottom: float) -> list:
+    def _bracket_rects(
+        self, side_x: float, bottom: float, *, right: bool = False
+    ) -> list:
         t = self._thickness
         w = self._bracket_width
         h = self._bracket_height
         color = self.color
+        if right:
+            return [
+                Rect(side_x + w - t, bottom, t, h, color),
+                Rect(side_x, bottom + h - t, w, t, color),
+                Rect(side_x, bottom, w, t, color),
+            ]
         return [
-            Rect(left_x, bottom, t, h, color),
-            Rect(left_x, bottom + h - t, w, t, color),
-            Rect(left_x, bottom, w, t, color),
+            Rect(side_x, bottom, t, h, color),
+            Rect(side_x, bottom + h - t, w, t, color),
+            Rect(side_x, bottom, w, t, color),
         ]
 
     def collect_scene(
@@ -136,14 +144,15 @@ class SquareParenthesisLayout(Layout):
         )
         nodes.extend(
             self._bracket_rects(
-                origin_x + self.left.getLeft(),
-                origin_y + self.left.getBottom(),
+                origin_x + self.left.getLeft() - bx,
+                origin_y + self.left.getBottom() - by,
             )
         )
         nodes.extend(
             self._bracket_rects(
-                origin_x + self.right.getLeft(),
-                origin_y + self.right.getBottom(),
+                origin_x + self.right.getLeft() - bx,
+                origin_y + self.right.getBottom() - by,
+                right=True,
             )
         )
         return nodes

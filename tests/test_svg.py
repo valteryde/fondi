@@ -107,6 +107,35 @@ def test_svg_raster_symbols_use_y_up_placement():
     assert len(images) == len(symbols)
 
 
+def test_square_brackets_wrap_content():
+    mt = fondi.MathText(r"[2^{x}]", 50, COLOR)
+    scene = mt.scene()
+    from fondi.scene import Rect, TextRun
+
+    rects = [n for n in scene.children if isinstance(n, Rect)]
+    texts = [n for n in scene.children if isinstance(n, TextRun)]
+    min_tx = min(t.x for t in texts)
+    max_tx = max(t.x for t in texts)
+    assert min(r.x for r in rects) < min_tx
+    assert max(r.x + r.width for r in rects) > max_tx
+
+
+def test_square_brackets_in_cases_do_not_overlap_brace():
+    mt = fondi.MathText(
+        r"f(x^2)=\cases{2*x}{10>x}{[2^{x}]}{10<x}{\frac{1}{2}}{\text{else}}",
+        50,
+        COLOR,
+    )
+    scene = mt.scene()
+    tubor = next(
+        n for n in scene.children if getattr(n, "asset_id", "") == "tuborpara_left.png"
+    )
+    bracket_rects = [n for n in scene.children if type(n).__name__ == "Rect"]
+    assert bracket_rects
+    bracket_left = min(r.x for r in bracket_rects)
+    assert bracket_left > tubor.x + tubor.width
+
+
 def test_save_svg_skip_copy_fonts():
     import tempfile
 
@@ -166,6 +195,8 @@ if __name__ == "__main__":
     test_external_fonts_small_svg()
     test_save_svg_bundle_writes_fonts()
     test_svg_raster_symbols_use_y_up_placement()
+    test_square_brackets_wrap_content()
+    test_square_brackets_in_cases_do_not_overlap_brace()
     test_save_svg_skip_copy_fonts()
     write_gallery()
     print(f"test_svg: ok — SVG files written to {SVG_DIR}")
