@@ -5,6 +5,8 @@ from .delimiter_data import BRACE_CENTERLINE, PAREN_CENTERLINE
 
 _PAREN_HOOK_FRAC = 0.22
 _BRACE_EAR_FRAC = 0.16
+# Linear chords between traced knots look jagged in PNG; interpolate densely.
+_STEPS_PER_SEGMENT = 16
 
 
 def _map_extent_y(fy: float, height: float, hook_frac: float) -> float:
@@ -22,6 +24,19 @@ def _map_extent_y(fy: float, height: float, hook_frac: float) -> float:
     return hook_h + t * (height - 2 * hook_h)
 
 
+def _densify(waypoints: list[tuple[float, float]]) -> list[tuple[float, float]]:
+    if len(waypoints) < 2:
+        return waypoints
+    dense: list[tuple[float, float]] = []
+    for i in range(len(waypoints) - 1):
+        x0, y0 = waypoints[i]
+        x1, y1 = waypoints[i + 1]
+        for step in range(_STEPS_PER_SEGMENT + (0 if i else 1)):
+            t = step / _STEPS_PER_SEGMENT
+            dense.append((x0 + (x1 - x0) * t, y0 + (y1 - y0) * t))
+    return dense
+
+
 def _centerline_polyline(
     knots: list[tuple[float, float]],
     side_x: float,
@@ -30,10 +45,11 @@ def _centerline_polyline(
     height: float,
     hook_frac: float,
 ) -> list[tuple[float, float]]:
-    return [
+    waypoints = [
         (side_x + fx * width, bottom + _map_extent_y(fy, height, hook_frac))
         for fx, fy in knots
     ]
+    return _densify(waypoints)
 
 
 def _mirror_points(
