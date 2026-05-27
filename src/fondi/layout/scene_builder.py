@@ -49,13 +49,26 @@ def collect_children(
                         - layout.bottomLineDiffrence
                     )
                 else:
-                    world_x = parent.getLeft() + layout.getLeft() - rox + layout.width / 2
-                    baseline_y = (
-                        parent.getBottom()
-                        + layout.getBottom()
-                        - roy
-                        - layout.bottomLineDiffrence
-                    )
+                    if abs(parent.getLeft()) < 0.5:
+                        world_x = layout.getLeft() - rox + layout.width / 2
+                        baseline_y = (
+                            layout.getBottom() - roy - layout.bottomLineDiffrence
+                        )
+                    else:
+                        world_x = (
+                            parent.getLeft()
+                            - rox
+                            + layout.getLeft()
+                            - lx
+                            + layout.width / 2
+                        )
+                        baseline_y = (
+                            parent.getBottom()
+                            - roy
+                            + layout.getBottom()
+                            - ly
+                            - layout.bottomLineDiffrence
+                        )
                 nodes.append(
                     TextRun(
                         layout.text,
@@ -71,8 +84,12 @@ def collect_children(
                     sx = corner_x + layout.getLeft() - lx
                     sy = corner_y + layout.getBottom() - ly
                 else:
-                    sx = parent.getLeft() + layout.getLeft() - rox
-                    sy = parent.getBottom() + layout.getBottom() - roy
+                    if abs(parent.getLeft()) < 0.5:
+                        sx = layout.getLeft() - rox
+                        sy = layout.getBottom() - roy
+                    else:
+                        sx = parent.getLeft() - rox + layout.getLeft() - lx
+                        sy = parent.getBottom() - roy + layout.getBottom() - ly
                 nodes.append(
                     RasterSymbol(
                         layout.fname,
@@ -94,6 +111,8 @@ def collect_children(
                         corner_y + layout.getBottom() - ly,
                     )
                 else:
+                    # Sibling composite on the line (e.g. parens after sin): position
+                    # from layout.getLeft() in the shared line coordinate system.
                     child_corner = (
                         layout.getLeft() - rox,
                         layout.getBottom() - roy,

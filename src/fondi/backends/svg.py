@@ -78,6 +78,18 @@ def _fill_attrs(fill: tuple[int, int, int, int]) -> dict[str, str]:
     return attrs
 
 
+def _y_up_bitmap_transform(
+    x: float, y_top: float, width: float, *, flip_x: bool = False
+) -> str:
+    """Undo the root Y flip so bitmap-backed nodes match Pillow placement."""
+    rx, ry = round(x, 3), round(y_top, 3)
+    parts = [f"translate({rx},{ry}) scale(1,-1) translate({-rx},{-ry})"]
+    if flip_x:
+        cx = round(x + width / 2, 3)
+        parts.append(f"translate({cx},0) scale(-1,1) translate({-cx},0)")
+    return " ".join(parts)
+
+
 def _append_node(group: Element, node: Node) -> None:
     if isinstance(node, TextRun):
         el = SubElement(group, "text")
@@ -116,11 +128,14 @@ def _append_node(group: Element, node: Node) -> None:
         for key, value in _fill_attrs(node.fill).items():
             el.set(key, value)
     elif isinstance(node, Rect):
+        x = node.x
+        y_top = node.y + node.height
         el = SubElement(group, "rect")
-        el.set("x", str(round(node.x, 3)))
-        el.set("y", str(round(node.y, 3)))
+        el.set("x", str(round(x, 3)))
+        el.set("y", str(round(y_top, 3)))
         el.set("width", str(round(node.width, 3)))
         el.set("height", str(round(node.height, 3)))
+        el.set("transform", _y_up_bitmap_transform(x, y_top, node.width))
         for key, value in _fill_attrs(node.fill).items():
             el.set(key, value)
     elif isinstance(node, RasterSymbol):
@@ -128,18 +143,18 @@ def _append_node(group: Element, node: Node) -> None:
             "data:image/png;base64,"
             + base64.b64encode(loadFile(node.asset_id).read()).decode("ascii")
         )
+        x = node.x
+        y_top = node.y + node.height
         el = SubElement(group, "image")
-        el.set("x", str(round(node.x, 3)))
-        el.set("y", str(round(node.y, 3)))
+        el.set("x", str(round(x, 3)))
+        el.set("y", str(round(y_top, 3)))
         el.set("width", str(round(node.width, 3)))
         el.set("height", str(round(node.height, 3)))
         el.set("href", href)
-        if node.flip_x:
-            cx = node.x + node.width / 2
-            el.set(
-                "transform",
-                f"translate({round(cx, 3)},0) scale(-1,1) translate({round(-cx, 3)},0)",
-            )
+        el.set(
+            "transform",
+            _y_up_bitmap_transform(x, y_top, node.width, flip_x=node.flip_x),
+        )
 
 
 def render_svg(
