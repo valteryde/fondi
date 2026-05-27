@@ -2,7 +2,7 @@
 from .helper import boundingBox, unwrap_macro_arg
 from .layout import Layout, MACROS
 from ..mathtext import MathText
-from .scene_builder import collect_children, composite_origin
+from .scene_builder import collect_children
 from ..scene import Polyline
 import math
 
@@ -47,8 +47,10 @@ class SqrtLayout(Layout):
         nodes = collect_children(
             self, (bx, by), self.inner, root=root, scene_corner=corner
         )
+        # Radical points were authored for top-down image coords; flip y for fondi.
         points = [
-            (origin_x + px, origin_y + py) for px, py in self._sqrt_points
+            (origin_x + px, origin_y + self.height - py)
+            for px, py in self._sqrt_points
         ]
         nodes.append(
             Polyline(points, self.color, self.linewidth)

@@ -328,11 +328,11 @@ def parse_(expr):
     cprint(tokens)
     tokens = catchDoubleBiCommands(tokens)
     cprint(tokens)
+    tokens = combineCharsToWords(tokens)
+    cprint(tokens)
     tokens = rearrangeBidirection(tokens)
     cprint(tokens)
     tokens = combine(tokens)
-    cprint(tokens)
-    tokens = combineCharsToWords(tokens)
     cprint(tokens)
 
     print('---------E----------')
@@ -345,9 +345,9 @@ def parse(expr):
     tokens = combine(tokens)
     tokens = translate(tokens)
     tokens = catchDoubleBiCommands(tokens)
+    tokens = combineCharsToWords(tokens)
     tokens = rearrangeBidirection(tokens)
     tokens = combine(tokens)
-    tokens = combineCharsToWords(tokens)
 
     return tokens
 
