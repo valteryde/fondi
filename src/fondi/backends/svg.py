@@ -78,23 +78,20 @@ def _fill_attrs(fill: tuple[int, int, int, int]) -> dict[str, str]:
     return attrs
 
 
-def _y_up_bitmap_transform(
-    x: float, y_top: float, width: float, *, flip_x: bool = False
-) -> str:
-    """Undo the root Y flip so bitmap-backed nodes match Pillow placement."""
-    rx, ry = round(x, 3), round(y_top, 3)
-    parts = [f"translate({rx},{ry}) scale(1,-1) translate({-rx},{-ry})"]
-    if flip_x:
-        cx = round(x + width / 2, 3)
-        parts.append(f"translate({cx},0) scale(-1,1) translate({-cx},0)")
-    return " ".join(parts)
+def _fondi_y_to_svg(y: float, scene_height: float) -> float:
+    return scene_height - y
 
 
-def _append_node(group: Element, node: Node) -> None:
+def _flip_x_transform(x: float, width: float) -> str:
+    cx = round(x + width / 2, 3)
+    return f"translate({cx},0) scale(-1,1) translate({-cx},0)"
+
+
+def _append_node(group: Element, node: Node, scene_height: float) -> None:
     if isinstance(node, TextRun):
         el = SubElement(group, "text")
         el.set("x", str(round(node.x, 3)))
-        el.set("y", str(round(node.y, 3)))
+        el.set("y", str(round(_fondi_y_to_svg(node.y, scene_height), 3)))
         el.set("font-family", FONT_FAMILY)
         el.set("font-size", str(node.font_size))
         el.set("font-style", "italic" if node.style == "italic" else "normal")
@@ -106,14 +103,15 @@ def _append_node(group: Element, node: Node) -> None:
     elif isinstance(node, Line):
         el = SubElement(group, "line")
         el.set("x1", str(round(node.x1, 3)))
-        el.set("y1", str(round(node.y1, 3)))
+        el.set("y1", str(round(_fondi_y_to_svg(node.y1, scene_height), 3)))
         el.set("x2", str(round(node.x2, 3)))
-        el.set("y2", str(round(node.y2, 3)))
+        el.set("y2", str(round(_fondi_y_to_svg(node.y2, scene_height), 3)))
         for key, value in _stroke_attrs(node.stroke, node.stroke_width).items():
             el.set(key, value)
     elif isinstance(node, Polyline):
         points = " ".join(
-            f"{round(x, 3)},{round(y, 3)}" for x, y in node.points
+            f"{round(x, 3)},{round(_fondi_y_to_svg(y, scene_height), 3)}"
+            for x, y in node.points
         )
         el = SubElement(group, "polyline")
         el.set("points", points)
@@ -122,20 +120,22 @@ def _append_node(group: Element, node: Node) -> None:
     elif isinstance(node, Ellipse):
         el = SubElement(group, "ellipse")
         el.set("cx", str(round(node.x + node.width / 2, 3)))
-        el.set("cy", str(round(node.y + node.height / 2, 3)))
+        el.set(
+            "cy",
+            str(round(_fondi_y_to_svg(node.y + node.height / 2, scene_height), 3)),
+        )
         el.set("rx", str(round(node.width / 2, 3)))
         el.set("ry", str(round(node.height / 2, 3)))
         for key, value in _fill_attrs(node.fill).items():
             el.set(key, value)
     elif isinstance(node, Rect):
         x = node.x
-        y_top = node.y + node.height
+        y_top = _fondi_y_to_svg(node.y + node.height, scene_height)
         el = SubElement(group, "rect")
         el.set("x", str(round(x, 3)))
         el.set("y", str(round(y_top, 3)))
         el.set("width", str(round(node.width, 3)))
         el.set("height", str(round(node.height, 3)))
-        el.set("transform", _y_up_bitmap_transform(x, y_top, node.width))
         for key, value in _fill_attrs(node.fill).items():
             el.set(key, value)
     elif isinstance(node, RasterSymbol):
@@ -144,17 +144,15 @@ def _append_node(group: Element, node: Node) -> None:
             + base64.b64encode(loadFile(node.asset_id).read()).decode("ascii")
         )
         x = node.x
-        y_top = node.y + node.height
+        y_top = _fondi_y_to_svg(node.y + node.height, scene_height)
         el = SubElement(group, "image")
         el.set("x", str(round(x, 3)))
         el.set("y", str(round(y_top, 3)))
         el.set("width", str(round(node.width, 3)))
         el.set("height", str(round(node.height, 3)))
         el.set("href", href)
-        el.set(
-            "transform",
-            _y_up_bitmap_transform(x, y_top, node.width, flip_x=node.flip_x),
-        )
+        if node.flip_x:
+            el.set("transform", _flip_x_transform(x, node.width))
 
 
 def render_svg(
@@ -184,13 +182,9 @@ def render_svg(
     defs = SubElement(root, "defs")
     style = SubElement(defs, "style")
     style.text = _font_face_css(embed_fonts=embed_fonts, font_url_prefix=font_url_prefix)
-    group = SubElement(
-        root,
-        "g",
-        transform=f"translate(0,{round(height, 3)}) scale(1,-1)",
-    )
+    group = SubElement(root, "g")
     for node in scene.children:
-        _append_node(group, node)
+        _append_node(group, node, height)
     return '<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(root, encoding="unicode")
 
 
