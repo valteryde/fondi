@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 import base64
-from pathlib import Path
+from pathlib import Path as PathlibPath
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from ..fileloader import loadFile
 from ..raster_symbols import symbol_image_png_bytes
+from ..path_util import fondi_path_to_svg_d
 from ..scene import (
     Ellipse,
     Line,
     Node,
+    Path as ScenePath,
     Polyline,
     RasterSymbol,
     Rect,
@@ -23,9 +25,9 @@ FONT_ITALIC = "NewCM10-Italic.otf"
 FONT_FILES = (FONT_REGULAR, FONT_ITALIC)
 
 
-def copy_font_files(target_dir: str | Path) -> list[Path]:
+def copy_font_files(target_dir: str | PathlibPath) -> list[PathlibPath]:
     """Copy bundled New CM OTF files into target_dir. Returns written paths."""
-    target = Path(target_dir)
+    target = PathlibPath(target_dir)
     target.mkdir(parents=True, exist_ok=True)
     written = []
     for name in FONT_FILES:
@@ -118,6 +120,8 @@ def _append_node(group: Element, node: Node, scene_height: float) -> None:
         el.set("points", points)
         for key, value in _stroke_attrs(node.stroke, node.stroke_width).items():
             el.set(key, value)
+        el.set("stroke-linecap", "round")
+        el.set("stroke-linejoin", "round")
     elif isinstance(node, Ellipse):
         el = SubElement(group, "ellipse")
         el.set("cx", str(round(node.x + node.width / 2, 3)))
@@ -139,6 +143,16 @@ def _append_node(group: Element, node: Node, scene_height: float) -> None:
         el.set("height", str(round(node.height, 3)))
         for key, value in _fill_attrs(node.fill).items():
             el.set(key, value)
+    elif isinstance(node, ScenePath):
+        el = SubElement(group, "path")
+        el.set("d", fondi_path_to_svg_d(node.d, scene_height))
+        for key, value in _stroke_attrs(node.stroke, node.stroke_width).items():
+            el.set(key, value)
+        el.set("stroke-linecap", "round")
+        el.set("stroke-linejoin", "round")
+        if node.fill is not None:
+            for key, value in _fill_attrs(node.fill).items():
+                el.set(key, value)
     elif isinstance(node, RasterSymbol):
         png = symbol_image_png_bytes(
             node.asset_id,
@@ -194,12 +208,12 @@ def render_svg(
 
 def save_svg_bundle(
     scene: Scene,
-    svg_path: str | Path,
+    svg_path: str | PathlibPath,
     *,
     embed_fonts: bool = False,
     font_subdir: str | None = "fonts",
     copy_fonts: bool = True,
-) -> Path:
+) -> PathlibPath:
     """
     Write SVG to svg_path.
 
@@ -209,7 +223,7 @@ def save_svg_bundle(
     copy_fonts: when embed_fonts is False, copy bundled OTF files into place.
         Set False if fonts already exist at the referenced path.
     """
-    svg_path = Path(svg_path)
+    svg_path = PathlibPath(svg_path)
     if embed_fonts:
         font_url_prefix = ""
         font_dir = None

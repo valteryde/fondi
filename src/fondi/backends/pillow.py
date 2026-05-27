@@ -4,11 +4,13 @@ from PIL import Image, ImageDraw
 
 from ..metrics import load_font
 from ..raster_symbols import load_symbol_image
+from ..path_util import sample_path_subpaths
 from ..scene import (
     Color,
     Ellipse,
     Line,
     Node,
+    Path as ScenePath,
     Polyline,
     RasterSymbol,
     Rect,
@@ -53,7 +55,12 @@ def _render_node(
         pil_points = [
             (x, _fondi_y_to_pil(y, scene_height)) for x, y in node.points
         ]
-        draw.line(pil_points, fill=node.stroke, width=int(node.stroke_width))
+        draw.line(
+            pil_points,
+            fill=node.stroke,
+            width=int(max(1, node.stroke_width)),
+            joint="curve",
+        )
     elif isinstance(node, Ellipse):
         x0 = node.x
         y1 = _fondi_y_to_pil(node.y + node.height, scene_height)
@@ -66,6 +73,19 @@ def _render_node(
         x1 = node.x + node.width
         y0 = _fondi_y_to_pil(node.y, scene_height)
         draw.rectangle((x0, y1, x1, y0), fill=node.fill)
+    elif isinstance(node, ScenePath):
+        width = int(max(1, node.stroke_width))
+        for subpath in sample_path_subpaths(node.d):
+            pil_points = [
+                (x, _fondi_y_to_pil(y, scene_height)) for x, y in subpath
+            ]
+            if pil_points:
+                draw.line(
+                    pil_points,
+                    fill=node.stroke,
+                    width=width,
+                    joint="curve",
+                )
     elif isinstance(node, RasterSymbol):
         symbol = _load_symbol_image(
             node.asset_id,

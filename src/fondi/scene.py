@@ -63,7 +63,17 @@ class RasterSymbol:
     flip_x: bool = False
 
 
-Node = Union[TextRun, Line, Polyline, Ellipse, Rect, RasterSymbol]
+@dataclass
+class Path:
+    """SVG path data in fondi y-up coordinates (M/L/C commands)."""
+
+    d: str
+    stroke: Color
+    stroke_width: float
+    fill: Color | None = None
+
+
+Node = Union[TextRun, Line, Polyline, Ellipse, Rect, RasterSymbol, Path]
 
 
 @dataclass
@@ -105,6 +115,10 @@ def _node_bounds(node: Node) -> tuple[float, float, float, float]:
         )
     if isinstance(node, (Ellipse, Rect, RasterSymbol)):
         return node.x, node.y, node.x + node.width, node.y + node.height
+    if isinstance(node, Path):
+        from .path_util import path_bounds
+
+        return path_bounds(node.d, node.stroke_width)
     raise TypeError(type(node))
 
 
@@ -155,4 +169,6 @@ def translate_node(node: Node, dx: float, dy: float) -> Node:
             node.fill,
             node.flip_x,
         )
+    if isinstance(node, Path):
+        return Path(node.d, node.stroke, node.stroke_width, node.fill)
     raise TypeError(type(node))

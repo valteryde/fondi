@@ -1,12 +1,14 @@
 
 from .helper import boundingBox, unwrap_macro_arg
 from .layout import Layout, MACROS, WHITESPACESIZE
-from ..plain import Symbol
 from ..mathtext import MathText
-from .scene_builder import collect_children, composite_origin
+from .scene_builder import collect_children
 from ..scene import Rect
+from .delimiter_geom import round_paren_nodes
 
 FONTSIZELINEWIDTH = 0.05
+# Centerline polylines need a heavier stroke than square-bracket bar thickness.
+DELIMITER_STROKE_WIDTH = 0.085
 PARANORMALWIDTHCOEFF = 0.2
 PARATUBORWIDTHCOEFF = 0.4
 
@@ -18,14 +20,15 @@ class _BracketSide(Layout):
         self.height = height
 
 
+class _ParenSide(Layout):
+    def __init__(self, width, height):
+        super().__init__()
+        self.width = width
+        self.height = height
+
+
 class ParenthesisLayout(Layout):
-    def __init__(
-        self,
-        parent,
-        inner,
-        openFname="normpara_left.png",
-        closeFname="normpara_right.png",
-    ):
+    def __init__(self, parent, inner):
         super().__init__()
 
         self.fontSize = parent.fontSize
@@ -35,16 +38,16 @@ class ParenthesisLayout(Layout):
         self.inner.setCenter(0, self.inner.bottomLineDiffrence * 0.25)
 
         paraheight = max(self.inner.height, int(self.fontSize * 0.5))
+        bracket_width = PARANORMALWIDTHCOEFF * self.fontSize
+        self._stroke_width = self.fontSize * DELIMITER_STROKE_WIDTH
+        self._bracket_width = bracket_width
+        self._bracket_height = paraheight
 
-        self.left = Symbol(
-            openFname, PARANORMALWIDTHCOEFF * self.fontSize, paraheight, self.color
-        )
+        self.left = _ParenSide(bracket_width, paraheight)
         self.left.setCenter(y=0)
         self.left.setRight(self.inner.getLeft() - WHITESPACESIZE * self.fontSize)
 
-        self.right = Symbol(
-            closeFname, PARANORMALWIDTHCOEFF * self.fontSize, paraheight, self.color
-        )
+        self.right = _ParenSide(bracket_width, paraheight)
         self.right.setCenter(y=0)
         self.right.setLeft(self.inner.getRight() + WHITESPACESIZE * self.fontSize)
 
@@ -53,7 +56,6 @@ class ParenthesisLayout(Layout):
         self._bbox_offset = (x, y)
         self.width = x1 - x
         self.height = y1 - y
-        self._children = (self.left, self.inner, self.right)
         self.setBottomLineDiffrence(self.inner.bottomLineDiffrence)
 
     def collect_scene(
@@ -63,13 +65,42 @@ class ParenthesisLayout(Layout):
         **kwargs,
     ) -> list:
         bx, by = self._bbox_offset
-        return collect_children(
+        origin_x, origin_y = corner[0], corner[1]
+        nodes = collect_children(
             self,
             (bx, by),
-            *self._children,
+            self.left,
+            self.inner,
+            self.right,
             root=root,
             scene_corner=corner,
         )
+        sw = self._stroke_width
+        w = self._bracket_width
+        h = self._bracket_height
+        color = self.color
+        nodes.extend(
+            round_paren_nodes(
+                origin_x + self.left.getLeft() - bx,
+                origin_y + self.left.getBottom() - by,
+                w,
+                h,
+                sw,
+                color,
+            )
+        )
+        nodes.extend(
+            round_paren_nodes(
+                origin_x + self.right.getLeft() - bx,
+                origin_y + self.right.getBottom() - by,
+                w,
+                h,
+                sw,
+                color,
+                right=True,
+            )
+        )
+        return nodes
 
     def __repr__(self):
         return "\\left({}\\right)".format(self.inner)

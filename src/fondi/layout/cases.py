@@ -1,15 +1,22 @@
 
 from .layout import *
 from ..mathtext import MathText
-from ..plain import Symbol
-from .parenthesis import PARATUBORWIDTHCOEFF
+from .parenthesis import DELIMITER_STROKE_WIDTH, PARATUBORWIDTHCOEFF
 from .helper import boundingBox, unwrap_macro_arg
 from .scene_builder import collect_children
+from .delimiter_geom import cases_brace_nodes
 import math
 
 DISTSPACE = 0.75
 PARAPADDING = 0.25
 DISTLINES = 2
+
+
+class _BraceSide(Layout):
+    def __init__(self, width, height):
+        super().__init__()
+        self.width = width
+        self.height = height
 
 
 class Cases(Layout):
@@ -47,12 +54,12 @@ class Cases(Layout):
             sumHeight += GAPSIZE
 
         sumHeight += parent.fontSize * PARAPADDING - GAPSIZE
-        self.para = Symbol(
-            "tuborpara_left.png",
-            PARATUBORWIDTHCOEFF * self.fontSize,
-            int(sumHeight),
-            self.color,
-        )
+        brace_width = PARATUBORWIDTHCOEFF * self.fontSize
+        self._stroke_width = self.fontSize * DELIMITER_STROKE_WIDTH
+        self._brace_width = brace_width
+        self._brace_height = int(sumHeight)
+
+        self.para = _BraceSide(brace_width, int(sumHeight))
         self.para.setRight(self.cases[0][0].getLeft() - WHITESPACESIZE * self.fontSize)
         self.para.setTop(0)
 
@@ -73,10 +80,22 @@ class Cases(Layout):
         **kwargs,
     ) -> list:
         bx, by = self._bbox_offset
-        parts = [self.para] + [c for case in self.cases for c in case[:2]]
-        return collect_children(
+        origin_x, origin_y = corner[0], corner[1]
+        parts = [c for case in self.cases for c in case[:2]]
+        nodes = collect_children(
             self, (bx, by), *parts, root=root, scene_corner=corner
         )
+        nodes.extend(
+            cases_brace_nodes(
+                origin_x + self.para.getLeft() - bx,
+                origin_y + self.para.getBottom() - by,
+                self._brace_width,
+                self._brace_height,
+                self._stroke_width,
+                self.color,
+            )
+        )
+        return nodes
 
     def __repr__(self):
         return "\\cases{...}"

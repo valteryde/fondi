@@ -95,11 +95,19 @@ def test_save_svg_bundle_writes_fonts():
 def test_svg_raster_symbols_are_tinted():
     from fondi.raster_symbols import load_symbol_image
 
-    image = load_symbol_image("normpara_left.png", 10, 43, COLOR)
+    image = load_symbol_image("integral.png", 50, 200, COLOR)
     bbox = image.getbbox()
     assert bbox is not None
-    pixel = image.getpixel((bbox[0], bbox[1]))
-    assert pixel[:3] == COLOR[:3]
+    pixel = None
+    for y in range(bbox[1], bbox[3]):
+        for x in range(bbox[0], bbox[2]):
+            p = image.getpixel((x, y))
+            if p[3] > 200 and p[:3] == COLOR[:3]:
+                pixel = p
+                break
+        if pixel is not None:
+            break
+    assert pixel is not None
 
 
 def test_cases_scene_fits_rightmost_text():
@@ -122,7 +130,7 @@ def test_cases_scene_fits_rightmost_text():
 
 def test_svg_raster_symbols_use_y_up_placement():
     mt = fondi.MathText(
-        r"\sin(\frac{1}{2})",
+        r"\int{\frac{1}{2}}{dx}",
         20,
         COLOR,
     )
@@ -148,20 +156,48 @@ def test_square_brackets_wrap_content():
     assert max(r.x + r.width for r in rects) > max_tx
 
 
+def test_round_parens_use_vector_delimiters():
+    from fondi.scene import Polyline
+
+    mt = fondi.MathText(
+        r"\sin(\frac{x^2 + (10+2)_{hej}}{\frac{2}{x}_{i,j}})",
+        50,
+        COLOR,
+    )
+    scene = mt.scene()
+    delimiters = [n for n in scene.children if isinstance(n, Polyline)]
+    assert len(delimiters) >= 2
+    assert not any(
+        getattr(n, "asset_id", "").startswith("normpara")
+        for n in scene.children
+        if hasattr(n, "asset_id")
+    )
+    _, path = _write_svg(
+        r"\sin(\frac{1}{2})",
+        "paren_vector.svg",
+        fontsize=50,
+    )
+    svg = path.read_text(encoding="utf-8")
+    assert "<polyline" in svg
+    assert "normpara_left" not in svg
+
+
 def test_square_brackets_in_cases_do_not_overlap_brace():
+    from fondi.scene import Polyline, Rect
+
     mt = fondi.MathText(
         r"f(x^2)=\cases{2*x}{10>x}{[2^{x}]}{10<x}{\frac{1}{2}}{\text{else}}",
         50,
         COLOR,
     )
     scene = mt.scene()
-    tubor = next(
-        n for n in scene.children if getattr(n, "asset_id", "") == "tuborpara_left.png"
-    )
-    bracket_rects = [n for n in scene.children if type(n).__name__ == "Rect"]
+    brace_polylines = [n for n in scene.children if isinstance(n, Polyline)]
+    assert brace_polylines
+    brace_right = max(max(x for x, _ in p.points) for p in brace_polylines)
+    bracket_rects = [n for n in scene.children if isinstance(n, Rect)]
     assert bracket_rects
     bracket_left = min(r.x for r in bracket_rects)
-    assert bracket_left > tubor.x + tubor.width
+    assert bracket_left > brace_right
 
 
 def test_save_svg_skip_copy_fonts():
@@ -226,6 +262,7 @@ if __name__ == "__main__":
     test_cases_scene_fits_rightmost_text()
     test_svg_raster_symbols_use_y_up_placement()
     test_square_brackets_wrap_content()
+    test_round_parens_use_vector_delimiters()
     test_square_brackets_in_cases_do_not_overlap_brace()
     test_save_svg_skip_copy_fonts()
     write_gallery()

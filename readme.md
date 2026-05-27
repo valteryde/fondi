@@ -216,7 +216,7 @@ Layouts position math and emit a backend-neutral **scene graph** (`TextRun`, `Li
 
 * Parentheses
 * Subscript / superscript
-* Symbols (PNG assets in SVG, v1)
+* Delimiters (`()`, `[]`, cases `{`) as vector paths; integrals still PNG (v1)
 * Fractions
 * Cases
 * Greek letters
