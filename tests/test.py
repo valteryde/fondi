@@ -16,7 +16,7 @@ class TestMethods:
     def __createMathText__(self, mathtext, filename, fontsize=50, color=(255,255,255,255)):
         txt = fondi.MathText(mathtext, fontsize, color)
         txt.image.save(BASEDIR / filename)
-        
+        txt.save_svg(BASEDIR / filename.replace('.png', '.svg'))
 
     def testPolynomen(self):
         self.__createMathText__('2*x_{5}^{2}+7^{2}_{1}', 'images/polynomen.png')
@@ -85,6 +85,11 @@ class TestMethods:
 
     def testSubscriptMultipleCharacters(self):
         self.__createMathText__('a_{ijk} + b^{xyz} + c_{a+b}^{m+n} + a_{bc_{ak}}', 'images/subscript_multiple_characters.png')
+
+
+    def testGreekLetters(self):
+        self.__createMathText__('\\alpha + \\beta + \\gamma + \\Gamma + \\delta + \\Delta + \\eta + \\epsilon + \\theta + \\kappa + \\mu + \\lambda + \\tau + \\sigma + \\Sigma + \\phi + \\chi + \\psi + \\omega + \\Omega + \\pi + \\prime', 'images/greek_letters.png')
+        
 
 
 if __name__ == '__main__':

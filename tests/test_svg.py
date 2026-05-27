@@ -216,6 +216,19 @@ def test_square_brackets_in_cases_do_not_overlap_brace():
     assert bracket_left > brace_right
 
 
+def test_svg_greek_letters_are_ascii_safe():
+    mt = fondi.MathText(r"\alpha + \omega", 50, COLOR)
+    svg = mt.to_svg(embed_fonts=False)
+    assert "ω" not in svg
+    assert "α" not in svg
+    assert "&#969;" in svg
+    assert "&#945;" in svg
+    root = ET.fromstring(svg)
+    texts = [el.text for el in root.iter() if el.tag.endswith("text")]
+    assert "ω" in texts
+    assert "α" in texts
+
+
 def test_save_svg_skip_copy_fonts():
     import tempfile
 
@@ -282,5 +295,6 @@ if __name__ == "__main__":
     test_round_parens_use_vector_delimiters()
     test_square_brackets_in_cases_do_not_overlap_brace()
     test_save_svg_skip_copy_fonts()
+    test_svg_greek_letters_are_ascii_safe()
     write_gallery()
     print(f"test_svg: ok — SVG files written to {SVG_DIR}")

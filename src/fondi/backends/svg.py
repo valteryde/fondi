@@ -85,6 +85,14 @@ def _fondi_y_to_svg(y: float, scene_height: float) -> float:
     return scene_height - y
 
 
+def _ascii_safe_svg_markup(svg: str) -> str:
+    """Replace non-ASCII with numeric entities for pdflatex / includesvg."""
+    return "".join(
+        ch if ord(ch) < 128 else f"&#{ord(ch)};"
+        for ch in svg
+    )
+
+
 def _flip_x_transform(x: float, width: float) -> str:
     cx = round(x + width / 2, 3)
     return f"translate({cx},0) scale(-1,1) translate({-cx},0)"
@@ -203,7 +211,9 @@ def render_svg(
     group = SubElement(root, "g")
     for node in scene.children:
         _append_node(group, node, height)
-    return '<?xml version="1.0" encoding="UTF-8"?>\n' + tostring(root, encoding="unicode")
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' + _ascii_safe_svg_markup(
+        tostring(root, encoding="unicode")
+    )
 
 
 def save_svg_bundle(
