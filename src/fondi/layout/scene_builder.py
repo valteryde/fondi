@@ -101,8 +101,20 @@ def collect_children(
                     )
                 )
             elif isinstance(layout, MathText):
+                if scene_corner is not None:
+                    child_corner = (
+                        corner_x + layout.getLeft() - lx,
+                        corner_y + layout.getBottom() - ly,
+                    )
+                else:
+                    child_corner = (
+                        layout.getLeft() - rox,
+                        layout.getBottom() - roy,
+                    )
                 nodes.extend(
-                    layout.collect_scene(relayout=False, root=(rox, roy))
+                    layout.collect_scene(
+                        child_corner, relayout=False, root=(rox, roy)
+                    )
                 )
             else:
                 if scene_corner is not None:

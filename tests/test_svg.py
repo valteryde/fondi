@@ -110,6 +110,22 @@ def test_svg_raster_symbols_are_tinted():
     assert pixel is not None
 
 
+def test_nested_mathtext_argument_after_text_is_visible():
+    from fondi.scene import TextRun
+
+    mt = fondi.MathText(
+        r"\text{ [s] }{ v_q=12.5 }",
+        50,
+        COLOR,
+    )
+    scene = mt.scene()
+    runs = [n for n in scene.children if isinstance(n, TextRun)]
+    assert {n.text for n in runs} == {" [s] ", "v", "q", "=", "12.5"}
+    assert all(n.x >= 0 for n in runs)
+    xs = sorted(n.x for n in runs)
+    assert xs == sorted(xs), "text runs should appear left-to-right"
+
+
 def test_cases_scene_fits_rightmost_text():
     from fondi.metrics import measure_text
     from fondi.scene import TextRun
@@ -260,6 +276,7 @@ if __name__ == "__main__":
     test_save_svg_bundle_writes_fonts()
     test_svg_raster_symbols_are_tinted()
     test_cases_scene_fits_rightmost_text()
+    test_nested_mathtext_argument_after_text_is_visible()
     test_svg_raster_symbols_use_y_up_placement()
     test_square_brackets_wrap_content()
     test_round_parens_use_vector_delimiters()
