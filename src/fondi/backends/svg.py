@@ -5,6 +5,7 @@ from pathlib import Path
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from ..fileloader import loadFile
+from ..raster_symbols import symbol_image_png_bytes
 from ..scene import (
     Ellipse,
     Line,
@@ -139,10 +140,13 @@ def _append_node(group: Element, node: Node, scene_height: float) -> None:
         for key, value in _fill_attrs(node.fill).items():
             el.set(key, value)
     elif isinstance(node, RasterSymbol):
-        href = (
-            "data:image/png;base64,"
-            + base64.b64encode(loadFile(node.asset_id).read()).decode("ascii")
+        png = symbol_image_png_bytes(
+            node.asset_id,
+            int(node.width),
+            int(node.height),
+            node.fill,
         )
+        href = "data:image/png;base64," + base64.b64encode(png).decode("ascii")
         x = node.x
         y_top = _fondi_y_to_svg(node.y + node.height, scene_height)
         el = SubElement(group, "image")

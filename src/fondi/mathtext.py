@@ -5,7 +5,7 @@ from .layout import Layout, IMGMODE
 from .plain import PlainText
 from .parser import *
 from .layout import *
-from .scene import Scene
+from .scene import Scene, scene_size
 from pathlib import Path
 
 from PIL import Image
@@ -117,7 +117,8 @@ class MathText(Layout):
         from .layout.scene_builder import collect_children
 
         children = collect_children(self, (x, y), *self.line, root=(x, y))
-        return Scene(self.width, self.height, children)
+        width, height = scene_size(children)
+        return Scene(width, height, children)
 
     def scene(self) -> Scene:
         if self._scene is None:

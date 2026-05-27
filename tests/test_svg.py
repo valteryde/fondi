@@ -92,6 +92,34 @@ def test_save_svg_bundle_writes_fonts():
     assert "data:font/otf;base64" not in text
 
 
+def test_svg_raster_symbols_are_tinted():
+    from fondi.raster_symbols import load_symbol_image
+
+    image = load_symbol_image("normpara_left.png", 10, 43, COLOR)
+    bbox = image.getbbox()
+    assert bbox is not None
+    pixel = image.getpixel((bbox[0], bbox[1]))
+    assert pixel[:3] == COLOR[:3]
+
+
+def test_cases_scene_fits_rightmost_text():
+    from fondi.metrics import measure_text
+    from fondi.scene import TextRun
+
+    mt = fondi.MathText(
+        r"f(x^2)=\cases{2*x}{10>x}{[2^{x}]}{10<x}{\frac{1}{2}}{\text{else}}",
+        50,
+        COLOR,
+    )
+    scene = mt.scene()
+    rightmost = max(
+        n.x + measure_text(n.text, int(n.font_size), n.style).width / 2
+        for n in scene.children
+        if isinstance(n, TextRun)
+    )
+    assert scene.width > rightmost
+
+
 def test_svg_raster_symbols_use_y_up_placement():
     mt = fondi.MathText(
         r"\sin(\frac{1}{2})",
@@ -194,6 +222,8 @@ if __name__ == "__main__":
     test_scene_api()
     test_external_fonts_small_svg()
     test_save_svg_bundle_writes_fonts()
+    test_svg_raster_symbols_are_tinted()
+    test_cases_scene_fits_rightmost_text()
     test_svg_raster_symbols_use_y_up_placement()
     test_square_brackets_wrap_content()
     test_square_brackets_in_cases_do_not_overlap_brace()

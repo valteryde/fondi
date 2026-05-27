@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import numpy as np
 from PIL import Image, ImageDraw
 
-from ..fileloader import loadFile
 from ..metrics import load_font
+from ..raster_symbols import load_symbol_image
 from ..scene import (
     Color,
     Ellipse,
@@ -25,11 +24,7 @@ def _fondi_y_to_pil(y: float, scene_height: float) -> float:
 
 
 def _load_symbol_image(asset_id: str, width: int, height: int, fill: Color) -> Image.Image:
-    image = Image.open(loadFile(asset_id)).convert("RGBA")
-    data = np.array(image)
-    data[(data == (0, 0, 0, 255)).all(axis=-1)] = fill
-    image = Image.fromarray(data)
-    return image.resize((int(width), int(height)))
+    return load_symbol_image(asset_id, width, height, fill)
 
 
 def _render_node(
