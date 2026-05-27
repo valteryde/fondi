@@ -1,9 +1,9 @@
 
-from .helper import boundingBox
+from .helper import boundingBox, unwrap_macro_arg
 from .layout import Layout, MACROS, WHITESPACESIZE
 from ..plain import Symbol
 from ..mathtext import MathText
-from .scene_builder import collect_children
+from .scene_builder import collect_children, composite_origin
 from ..scene import Rect
 
 FONTSIZELINEWIDTH = 0.05
@@ -31,7 +31,7 @@ class ParenthesisLayout(Layout):
         self.fontSize = parent.fontSize
         self.color = parent.color
 
-        self.inner = MathText(inner, self.fontSize, self.color)
+        self.inner = MathText(unwrap_macro_arg(inner), self.fontSize, self.color)
         self.inner.setCenter(0, self.inner.bottomLineDiffrence * 0.25)
 
         paraheight = max(self.inner.height, int(self.fontSize * 0.5))
@@ -56,10 +56,20 @@ class ParenthesisLayout(Layout):
         self._children = (self.left, self.inner, self.right)
         self.setBottomLineDiffrence(self.inner.bottomLineDiffrence)
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float],
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
         bx, by = self._bbox_offset
-        return collect_children((ox + bx, oy + by), *self._children)
+        return collect_children(
+            self,
+            (bx, by),
+            *self._children,
+            root=root,
+            scene_corner=corner,
+        )
 
     def __repr__(self):
         return "\\left({}\\right)".format(self.inner)
@@ -72,7 +82,7 @@ class SquareParenthesisLayout(Layout):
         self.fontSize = parent.fontSize
         self.color = parent.color
 
-        self.inner = MathText(inner, self.fontSize, self.color)
+        self.inner = MathText(unwrap_macro_arg(inner), self.fontSize, self.color)
         self.inner.setCenter(0, 0)
 
         bracket_width = int(PARANORMALWIDTHCOEFF * self.fontSize)
@@ -107,21 +117,33 @@ class SquareParenthesisLayout(Layout):
             Rect(left_x, bottom, w, t, color),
         ]
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float],
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
         bx, by = self._bbox_offset
-        scene_offset = (ox + bx, oy + by)
-        nodes = self.inner.collect_scene(scene_offset)
+        origin_x, origin_y = corner[0], corner[1]
+        nodes = collect_children(
+            self,
+            (bx, by),
+            self.left,
+            self.inner,
+            self.right,
+            root=root,
+            scene_corner=corner,
+        )
         nodes.extend(
             self._bracket_rects(
-                ox + bx + self.left.getLeft(),
-                oy + by + self.left.getBottom(),
+                origin_x + self.left.getLeft(),
+                origin_y + self.left.getBottom(),
             )
         )
         nodes.extend(
             self._bracket_rects(
-                ox + bx + self.right.getLeft(),
-                oy + by + self.right.getBottom(),
+                origin_x + self.right.getLeft(),
+                origin_y + self.right.getBottom(),
             )
         )
         return nodes

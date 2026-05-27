@@ -3,7 +3,7 @@ from .layout import *
 from ..mathtext import MathText
 from ..plain import Symbol
 from .parenthesis import PARATUBORWIDTHCOEFF
-from .helper import boundingBox
+from .helper import boundingBox, unwrap_macro_arg
 from .scene_builder import collect_children
 import math
 
@@ -30,9 +30,9 @@ class Cases(Layout):
 
         self.cases = []
         for case, para in cases:
-            left = MathText(case, self.fontSize, self.color)
+            left = MathText(unwrap_macro_arg(case), self.fontSize, self.color)
             left.setLeft(0)
-            right = MathText(para, self.fontSize, self.color)
+            right = MathText(unwrap_macro_arg(para), self.fontSize, self.color)
             self.cases.append((left, right, max(left.height, right.height)))
 
         maxWidth = math.ceil(max(i[0].width for i in self.cases))
@@ -66,11 +66,17 @@ class Cases(Layout):
         self.height = y1 - y
         self.setBottomLineDiffrence(-self.height / 2 + self.fontSize / 4)
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float],
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
         bx, by = self._bbox_offset
         parts = [self.para] + [c for case in self.cases for c in case[:2]]
-        return collect_children((ox + bx, oy + by), *parts)
+        return collect_children(
+            self, (bx, by), *parts, root=root, scene_corner=corner
+        )
 
     def __repr__(self):
         return "\\cases{...}"

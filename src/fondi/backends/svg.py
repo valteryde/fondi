@@ -87,7 +87,7 @@ def _append_node(group: Element, node: Node) -> None:
         el.set("font-size", str(node.font_size))
         el.set("font-style", "italic" if node.style == "italic" else "normal")
         el.set("text-anchor", "middle")
-        el.set("dominant-baseline", "middle")
+        el.set("dominant-baseline", "alphabetic")
         for key, value in _fill_attrs(node.fill).items():
             el.set(key, value)
         el.text = node.text

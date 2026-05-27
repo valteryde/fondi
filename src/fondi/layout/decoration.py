@@ -1,6 +1,8 @@
 
 from .layout import *
 from ..mathtext import MathText
+from .helper import unwrap_macro_arg
+from .scene_builder import collect_children, composite_origin
 from ..scene import Ellipse, Line, Polyline
 import math
 
@@ -14,7 +16,7 @@ class TextDecorationLayout(Layout):
 
         self.fontSize = parent.fontSize
         self.color = parent.color
-        self.content = MathText(content, self.fontSize, self.color)
+        self.content = MathText(unwrap_macro_arg(content), self.fontSize, self.color)
         self.decoration = decoration
         self._deco_nodes: list = []
         self._deco_width = 0
@@ -25,15 +27,22 @@ class TextDecorationLayout(Layout):
         self._gap = gap
         self.width = max(self.content.width, self._deco_width)
         self.height = self.content.height + self._deco_height + gap
+        self._bbox_offset = (0.0, 0.0)
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
-        nodes = []
-        content_x = ox + (self.width - self.content.width) / 2
-        nodes.extend(self.content.collect_scene((content_x, oy)))
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float],
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
+        bx, by = getattr(self, "_bbox_offset", (0.0, 0.0))
+        origin_x, origin_y = corner[0], corner[1]
+        nodes = collect_children(
+            self, (bx, by), self.content, root=root, scene_corner=corner
+        )
 
-        deco_left = ox + (self.width - self._deco_width) / 2
-        deco_base = oy + self.content.height + self._gap
+        deco_left = origin_x + (self.width - self._deco_width) / 2
+        deco_base = origin_y + self.content.height + self._gap
         for node in self._deco_nodes:
             if isinstance(node, Ellipse):
                 nodes.append(

@@ -1,5 +1,5 @@
 
-from .helper import boundingBox
+from .helper import boundingBox, unwrap_macro_arg
 from .layout import Layout, MACROS, WHITESPACESIZE
 from ..plain import Symbol
 from .supersub import SUBSUPSIZE
@@ -23,11 +23,11 @@ class IntegralLayout(Layout):
     ):
         super().__init__()
 
-        self.inner = MathText(inner, parent.fontSize, color=parent.color)
-        self.inner_dx = MathText(dx, parent.fontSize, color=parent.color)
+        self.inner = MathText(unwrap_macro_arg(inner), parent.fontSize, color=parent.color)
+        self.inner_dx = MathText(unwrap_macro_arg(dx), parent.fontSize, color=parent.color)
 
-        self.lower = MathText(lower, int(parent.fontSize * SUBSUPSIZE), color=parent.color)
-        self.upper = MathText(upper, int(parent.fontSize * SUBSUPSIZE), color=parent.color)
+        self.lower = MathText(unwrap_macro_arg(lower), int(parent.fontSize * SUBSUPSIZE), color=parent.color)
+        self.upper = MathText(unwrap_macro_arg(upper), int(parent.fontSize * SUBSUPSIZE), color=parent.color)
 
         self.fontSize = parent.fontSize
         self.color = parent.color
@@ -81,10 +81,16 @@ class IntegralLayout(Layout):
         diff = self.lower.getBottom() - self.inner.getBottom()
         self.setBottomLineDiffrence(diff + self.inner.bottomLineDiffrence)
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float],
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
         bx, by = self._bbox_offset
-        return collect_children((ox + bx, oy + by), *self._children)
+        return collect_children(
+            self, (bx, by), *self._children, root=root, scene_corner=corner
+        )
 
     def handleSuperSub(parent, body, lower, upper):
         return IntegralLayout(parent, *body, lower=lower, upper=upper)

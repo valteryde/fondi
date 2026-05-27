@@ -88,6 +88,8 @@ def _render_node(
 def render_pillow(scene: Scene) -> Image.Image:
     width = max(int(scene.width), 0)
     height = max(int(scene.height), 0)
+    if width == 0 or height == 0:
+        return Image.new(IMGMODE, (0, 0))
     surface = Image.new(IMGMODE, (width, height), (0, 0, 0, 0))
     draw = ImageDraw.Draw(surface)
     for node in scene.children:

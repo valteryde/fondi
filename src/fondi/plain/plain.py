@@ -24,15 +24,24 @@ class PlainText(Layout):
         self.height = metrics.height
         self.setBottomLineDiffrence(metrics.bottom_line_delta)
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float] | None = None,
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
         if len(self.text) == 0:
             return []
-        ox, oy = offset
+        ox, oy = offset[0], offset[1]
+        if len(offset) >= 3:
+            baseline_y = offset[2]
+        else:
+            baseline_y = self.getBottom() - oy - self.bottomLineDiffrence
         return [
             TextRun(
                 self.text,
                 self.getLeft() - ox + self.width / 2,
-                self.getBottom() - oy + self.height / 2,
+                baseline_y,
                 self.fontSize,
                 self.style,
                 self.color,

@@ -1,5 +1,5 @@
-
 MACROS = {}
+IMGMODE = "RGBA"
 WHITESPACESIZE = 0.15
 
 
@@ -52,7 +52,12 @@ class Layout:
         if y is not None:
             self.y = y - self.height / 2
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float] | None = None,
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
         return list(self._extra_nodes)
 
     def prepPasteLeft(self, lastobj=0):

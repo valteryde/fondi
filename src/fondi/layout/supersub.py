@@ -1,5 +1,5 @@
 
-from .helper import boundingBox
+from .helper import boundingBox, unwrap_macro_arg
 from .layout import Layout, MACROS
 from ..mathtext import MathText
 from .scene_builder import collect_children
@@ -47,9 +47,9 @@ class SuperLayout(Layout):
         self.fontSize = parent.fontSize
         self.color = parent.color
 
-        self.base = MathText(base, self.fontSize, self.color)
+        self.base = MathText(unwrap_macro_arg(base), self.fontSize, self.color)
         self.base.setCenter(0, 0)
-        self.upper = MathText(upper, int(self.fontSize * SUBSUPSIZE), self.color)
+        self.upper = MathText(unwrap_macro_arg(upper), int(self.fontSize * SUBSUPSIZE), self.color)
 
         self.upper.setBottom(int(self.base.height * SUBSUPPOS))
         self.upper.setLeft(self.base.getRight())
@@ -60,13 +60,23 @@ class SuperLayout(Layout):
         self.height = y1 - y
         self._children = (self.base, self.upper)
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float],
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
         bx, by = self._bbox_offset
-        return collect_children((ox + bx, oy + by), *self._children)
+        return collect_children(
+            self,
+            (bx, by),
+            *self._children,
+            root=root,
+            scene_corner=corner,
+        )
 
     def __repr__(self):
-        return "({})^{}({})".format(self.base, self.upper)
+        return "({})^{}".format(self.base, self.upper)
 
 
 class SubLayout(Layout):
@@ -81,8 +91,8 @@ class SubLayout(Layout):
         self.fontSize = parent.fontSize
         self.color = parent.color
 
-        self.base = MathText(base, self.fontSize, self.color)
-        self.lower = MathText(lower, int(self.fontSize * SUBSUPSIZE), self.color)
+        self.base = MathText(unwrap_macro_arg(base), self.fontSize, self.color)
+        self.lower = MathText(unwrap_macro_arg(lower), int(self.fontSize * SUBSUPSIZE), self.color)
         self.base.setCenter(0, 0)
 
         self.lower.setTop(-int(self.base.height * SUBSUPPOS))
@@ -95,10 +105,20 @@ class SubLayout(Layout):
         self._children = (self.base, self.lower)
         self.setBottomLineDiffrence(self.lower.getBottom() - self.base.getBottom())
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float],
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
         bx, by = self._bbox_offset
-        return collect_children((ox + bx, oy + by), *self._children)
+        return collect_children(
+            self,
+            (bx, by),
+            *self._children,
+            root=root,
+            scene_corner=corner,
+        )
 
     def __repr__(self):
         return "({})_({})".format(self.base, self.lower)
@@ -116,9 +136,9 @@ class SubSuperLayout(Layout):
         self.fontSize = parent.fontSize
         self.color = parent.color
 
-        self.base = MathText(base, self.fontSize, self.color)
-        self.upper = MathText(upper, int(self.fontSize * SUBSUPSIZE), self.color)
-        self.lower = MathText(lower, int(self.fontSize * SUBSUPSIZE), self.color)
+        self.base = MathText(unwrap_macro_arg(base), self.fontSize, self.color)
+        self.upper = MathText(unwrap_macro_arg(upper), int(self.fontSize * SUBSUPSIZE), self.color)
+        self.lower = MathText(unwrap_macro_arg(lower), int(self.fontSize * SUBSUPSIZE), self.color)
         self.base.setCenter(0, 0)
 
         self.upper.setBottom(int(self.base.height * SUBSUPPOS))
@@ -133,10 +153,20 @@ class SubSuperLayout(Layout):
         self._children = (self.base, self.upper, self.lower)
         self.setBottomLineDiffrence(self.lower.getBottom() - self.base.getBottom())
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float],
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
         bx, by = self._bbox_offset
-        return collect_children((ox + bx, oy + by), *self._children)
+        return collect_children(
+            self,
+            (bx, by),
+            *self._children,
+            root=root,
+            scene_corner=corner,
+        )
 
     def __repr__(self):
         return "{}^{}_{}".format(self.base, self.upper, self.lower)

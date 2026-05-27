@@ -1,8 +1,8 @@
 
-from .helper import boundingBox
+from .helper import boundingBox, unwrap_macro_arg
 from .layout import Layout, MACROS
 from ..mathtext import MathText
-from .scene_builder import collect_children
+from .scene_builder import collect_children, composite_origin
 from ..scene import Polyline
 import math
 
@@ -11,7 +11,7 @@ class SqrtLayout(Layout):
     def __init__(self, parent, *args):
         super().__init__()
 
-        self.inner = MathText(args[0], parent.fontSize, color=parent.color)
+        self.inner = MathText(unwrap_macro_arg(args[0]), parent.fontSize, color=parent.color)
 
         self.linewidth = 3
         self.fontSize = parent.fontSize
@@ -33,11 +33,22 @@ class SqrtLayout(Layout):
         self.inner.setBottom(0)
         self.inner.setLeft(line3[0][0] + self.padding / 2)
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
-        nodes = self.inner.collect_scene(offset)
+        x, y, _, _ = boundingBox(self.inner)
+        self._bbox_offset = (x, y)
+
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float],
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
+        bx, by = self._bbox_offset
+        origin_x, origin_y = corner[0], corner[1]
+        nodes = collect_children(
+            self, (bx, by), self.inner, root=root, scene_corner=corner
+        )
         points = [
-            (ox + x, oy + y) for x, y in self._sqrt_points
+            (origin_x + px, origin_y + py) for px, py in self._sqrt_points
         ]
         nodes.append(
             Polyline(points, self.color, self.linewidth)

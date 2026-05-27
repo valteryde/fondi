@@ -1,7 +1,7 @@
 
 from .layout import *
 from ..mathtext import MathText
-from .helper import boundingBox
+from .helper import boundingBox, unwrap_macro_arg
 from .scene_builder import collect_children
 from ..scene import Line
 
@@ -18,8 +18,8 @@ class FracLayout(Layout):
         self.fontSize = parent.fontSize
         self.color = parent.color
 
-        self.top = MathText(top, int(self.fontSize * FRACSHRINKCOEFF), self.color)
-        self.bottom = MathText(bottom, int(self.fontSize * FRACSHRINKCOEFF), self.color)
+        self.top = MathText(unwrap_macro_arg(top), int(self.fontSize * FRACSHRINKCOEFF), self.color)
+        self.bottom = MathText(unwrap_macro_arg(bottom), int(self.fontSize * FRACSHRINKCOEFF), self.color)
 
         linewidth = int(FRACFONTWIDTHCOEFF * self.fontSize)
         self.padding = FRACPADDINGCOEFF * self.fontSize + linewidth / 2
@@ -39,16 +39,25 @@ class FracLayout(Layout):
         self._frac_line_y = -y
         self._frac_line_width = linewidth
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float],
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
         bx, by = self._bbox_offset
-        nodes = collect_children((ox + bx, oy + by), self.top, self.bottom)
-        line_y = oy + self._frac_line_y
+        paste = (bx, by)
+        nodes = collect_children(
+            self, paste, self.top, self.bottom, root=root, scene_corner=corner
+        )
+        origin_x = corner[0]
+        origin_y = corner[1]
+        line_y = origin_y + self._frac_line_y
         nodes.append(
             Line(
-                ox + bx,
+                origin_x,
                 line_y,
-                ox + bx + self.width,
+                origin_x + self.width,
                 line_y,
                 self.color,
                 self._frac_line_width,

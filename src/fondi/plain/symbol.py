@@ -1,4 +1,5 @@
 
+from ..fileloader import loadFile
 from ..layout import Layout
 from ..scene import RasterSymbol
 
@@ -18,8 +19,13 @@ class Symbol(Layout):
         self.height = height
         self.color = color
 
-    def collect_scene(self, offset: tuple[float, float]) -> list:
-        ox, oy = offset
+    def collect_scene(
+        self,
+        corner: tuple[float, float] | tuple[float, float, float] | None = None,
+        root: tuple[float, float] | None = None,
+        **kwargs,
+    ) -> list:
+        ox, oy = offset[0], offset[1]
         return [
             RasterSymbol(
                 self.fname,
